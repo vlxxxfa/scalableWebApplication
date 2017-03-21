@@ -11,7 +11,7 @@ public interface UserDAO {
 
     User findUser(User user);
     //
-    // User updateUser(User user);
+    User updateUser(User user);
     //
     // void deleteUser(User user);
     //

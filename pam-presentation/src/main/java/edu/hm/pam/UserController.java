@@ -37,10 +37,10 @@ public class UserController {
         return this.userService.findUser(user);
     }
 
-    // @RequestMapping(path = "/updatedUser", method = RequestMethod.GET)
-    // public User updateUser(@RequestBody User user) {
-    //     return userService.updateUser(user);
-    // }
+    @RequestMapping(path = "/updatedUser", method = RequestMethod.GET)
+    public User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
+    }
     //
     // public void deleteUser(@RequestBody User user) {
     //     userService.deleteUser(user);
@@ -77,9 +77,9 @@ public class UserController {
 
         user.setPhotoAlben(photoAlbumList);
 
-        if (findUser(user) == null) {
-            return "Done: User doesn't find";
+        if (updateUser(user) == null) {
+            return "Done: User doesn't updated";
         }
-        return "Done: User find";
+        return "Done: User updated";
     }
 }

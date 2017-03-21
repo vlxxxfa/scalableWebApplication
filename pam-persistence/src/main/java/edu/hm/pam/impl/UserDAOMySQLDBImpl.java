@@ -22,11 +22,11 @@ public class UserDAOMySQLDBImpl implements UserDAO {
     public User findUser(User user) {
         return null;
     }
-    //
-    // @Override
-    // public Query<User> updateUser(User user) {
-    //     return null;
-    // }
+
+    @Override
+    public User updateUser(User user) {
+        return null;
+    }
     //
     // @Override
     // public void deleteUser(User user) {

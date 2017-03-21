@@ -10,8 +10,8 @@ public interface UserService {
     boolean createUser(User user);
 
     User findUser(User user);
-    //
-    // User updateUser(User user);
+
+    User updateUser(User user);
     //
     // void deleteUser(User user);
     //

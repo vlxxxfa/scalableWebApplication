@@ -26,12 +26,16 @@ public class UserDAOMongoDBImpl implements UserDAO {
     MongoDatabase db = mongo.getDatabase("qwertz");
     MongoCollection<Document> collection = db.getCollection("users");
 
+    Document document;
+    User foundUser;
+    User updatedUser;
+    boolean status = true;
+    Gson gson;
+
     @Override
     public boolean createUser(User user) {
 
-        boolean status = true;
-
-        Gson gson = new Gson();
+        gson = new Gson();
         String str_representation = gson.toJson(user);
 
         try {
@@ -46,32 +50,41 @@ public class UserDAOMongoDBImpl implements UserDAO {
     @Override
     public User findUser(User user) {
 
-        Document document;
-        User foundUser;
-
         try {
             document = collection.find(new Document("userName", user.getUserName())).first();
             String toJson = document.toJson();
             foundUser = new Gson().fromJson(toJson, User.class);
-        } catch (NullPointerException n) {
+        } catch (NullPointerException npe) {
             foundUser = null;
-        } catch (JsonSyntaxException j) {
+        } catch (JsonSyntaxException jse) {
             foundUser = null;
         }
         return foundUser;
     }
 
-    public User findUser2(User user) {
+    @Override
+    public User updateUser(User user) {
 
-        Document document = collection.find(new Document("userName", user.getUserName())).first();
-        String json = document.toJson();
-        System.out.println(document.toJson());
+        gson = new Gson();
+        String str_representation = gson.toJson(user);
 
-        Gson g = new Gson();
-        User user1 = g.fromJson(json, User.class);
+        try {
+            document = collection.find(new Document("userName", user.getUserName())).first();
+            Document newDocument = Document.parse(str_representation);
+            collection.findOneAndReplace(document, newDocument);
 
-        return user1;
+            String toJson = newDocument.toJson();
+            updatedUser = this.findUser(new Gson().fromJson(toJson, User.class));
+        } catch (NullPointerException npe){
+            updatedUser = null;
+        }
+        return updatedUser;
     }
+
+    // @Override
+    // public void deleteUser(User user) {
+    //
+    // }
 
     public static void main(String[] args) {
 
@@ -79,49 +92,31 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
         user.setUserName("admin");
-        user.setPassWord("admin");
+        user.setPassWord("xxx");
 
         Photo photo1 = new Photo();
-        photo1.setTitle("photoTitle1");
+        photo1.setTitle("xxx");
         Photo photo2 = new Photo();
-        photo2.setTitle("photoTitle2");
+        photo2.setTitle("xxx");
         List<Photo> photoList = new ArrayList<>();
         photoList.add(photo1);
         photoList.add(photo2);
 
         PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("AlbumTItle");
+        photoAlbum.setAlbumTitle("xxx");
         photoAlbum.setListOfPhotos(photoList);
 
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         photoAlbumList.add(photoAlbum);
 
         user.setPhotoAlben(photoAlbumList);
-        boolean status = userDAOMongoDB.createUser(user);
+        // boolean status = userDAOMongoDB.createUser(user);
         // User status = userDAOMongoDB.findUser(user);
+        User status = userDAOMongoDB.updateUser(user);
 
         System.out.println(status);
     }
 
-    // @Override
-    // public User updateUser(User user) {
-    //     return null;
-    // }
-
-    //
-    // public User findUser2(User user) {
-    //
-    //     Bson filter = new Document("userName",user.getUserName());
-    //     Object obj = collection.find().filter(filter).first();
-    //
-    //     return (User) obj;
-    // }
-
-    //
-    // @Override
-    // public void deleteUser(User user) {
-    //
-    // }
     //
     // @Override
     // public User logIn(User user) {

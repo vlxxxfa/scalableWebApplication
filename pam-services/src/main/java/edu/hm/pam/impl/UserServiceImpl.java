@@ -30,11 +30,11 @@ public class UserServiceImpl implements UserService {
     public User findUser(User user) {
         return userDAO.findUser(user);
     }
-    //
-    // @Override
-    // public User updateUser(User user) {
-    //     return userDAO.updateUser(user);
-    // }
+
+    @Override
+    public User updateUser(User user) {
+        return userDAO.updateUser(user);
+    }
     //
     // @Override
     // public void deleteUser(User user) {
