@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Gallery</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="assets/css/Header-Dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/css/lightbox.min.css">
+    <link rel="stylesheet" href="assets/css/Lightbox-Gallery.css">
+    <link rel="icon" href="http://img.freepik.com/free-icon/instagram-logo_318-84939.jpg?size=32&ext=jpg">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+</head>
+<body id="page">
+  <!--  <ul class="cb-slideshow">
+        <li><span>Image 01</span></li>
+        <li><span>Image 02</span></li>
+        <li><span>Image 03</span></li>
+        <li><span>Image 04</span></li>
+        <li><span>Image 05</span></li>
+        <li><span>Image 06</span></li>
+    </ul>
+-->
+<div>
+    <div class="header-dark">
+        <nav class="navbar navbar-default navigation-clean-search">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand navbar-link"
+                    href="http://vlxxxfa.github.io"><i
+                    class="glyphicon glyphicon-camera"></i><span class="text-title">
+                    Vl Fa</span></a>
+                    <button class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#navcol-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar top-bar"></span>
+                    <span class="icon-bar middle-bar"></span>
+                    <span class="icon-bar bottom-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="#">About me</a></li>
+                    <li class="dropdown"><a class="dropdown-toggle"
+                        data-toggle="dropdown" aria-expanded="false" href="#">Trips
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li role="presentation"><a href="#">Opatja (Croatia)</a></li>
+                        <li role="presentation"><a href="#">Corfu (Greece)</a></li>
+                        <li role="presentation"><a href="#">Creta (Greece)</a></li>
+                    </ul></li>
+                </ul>
+                <form class="navbar-form navbar-left" target="_self">
+                    <div class="form-group">
+                        <label class="control-label" for="search-field"><i
+                            class="glyphicon glyphicon-search"></i></label> <input
+                            class="form-control search-field" type="search" name="search"
+                            id="search-field">
+                        </div>
+                    </form>
+                    <p class="navbar-text navbar-right">
+                        <a class="navbar-link login" href="#" data-toggle="modal"
+                        data-target="#signIn">Sign in</a> <a
+                        class="btn btn-default action-button" role="button" href="#"
+                        data-toggle="modal" data-target="#signUp">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="container hero">
+            <div class="row row-centered">
+                <h1 class="text-center">Cloud Gallery</h1>
+                <h2 class="text-center">to manage your and my photos</h2>
+                <div class="row photos">
+
+                    <!-- 1. Photo album-->
+                    <div class="col-sm-6 col-md-3 col-centered item">
+                        <a href="assets/images/1.jpg" data-lightbox="photos"><img
+                            class="img-responsive" src="assets/images/1.jpg"></a>
+                        </div>
+                         <!--  <a href="./gallery.html"><img class="img-responsive"
+                               src="http://placehold.it/400x300"></a>
+                             <a href="assets/img/cat1-small.jpg" data-lightbox="photos"><img class="img-responsive" src="http://placehold.it/400x300"></a>
+                         -->
+                         <!-- 2. Photo album-->
+                         <div class="col-sm-6 col-md-3 col-centered item">
+                            <a href="assets/images/2.jpg" data-lightbox="photos"><img
+                                class="img-responsive" src="assets/images/2.jpg"></a>
+                            </div>
+                            <!-- 3. Photo album-->
+                            <div class="col-sm-6 col-md-3 col-centered item">
+                                <a href="assets/images/3.jpg" data-lightbox="photos"><img
+                                    class="img-responsive" src="assets/images/3.jpg"></a>
+                                </div>
+                                <!-- 4. Photo album-->
+                                <div class="col-sm-6 col-md-3 col-centered item">
+                                    <a href="assets/images/4.jpg" data-lightbox="photos"><img
+                                        class="img-responsive" src="assets/images/4.jpg"></a>
+                                    </div>
+
+                                    <!-- 5. Photo album-->
+                                    <div class="col-sm-6 col-md-3 col-centered item">
+                                        <a href="assets/images/5.jpg" data-lightbox="photos"><img
+                                            class="img-responsive" src="assets/images/5.jpg"></a>
+                                        </div>
+
+                                        <!-- 6. Photo album-->
+                                        <div class="col-sm-6 col-md-3 col-centered item">
+                                            <a href="assets/images/6.jpg" data-lightbox="photos"><img
+                                                class="img-responsive" src="assets/images/6.jpg"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal for Sign in-->
+                        <div class="modal fade" id="signIn" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="displayOfModalContent">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4>Welcome to Vl Fa</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form class="form-horizontal" role="form">
+
+                                                <div style="margin-bottom: 25px" class="input-group">
+                                                    <span class="input-group-addon"><i
+                                                        class="glyphicon glyphicon-user"></i></span> <input
+                                                        id="login-username" type="text" class="form-control"
+                                                        name="username" value="" placeholder="username or email">
+                                                    </div>
+                                                    <div style="margin-bottom: 25px" class="input-group">
+                                                        <span class="input-group-addon"><i
+                                                            class="glyphicon glyphicon-lock"></i></span> <input
+                                                            id="login-password" type="password" class="form-control"
+                                                            name="password" placeholder="password">
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="checkbox">
+                                                                <label> <input id="login-remember" type="checkbox"
+                                                                    name="remember" value="1"> Remember me
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div style="margin-top: 10px" class="form-group">
+                                                            <!-- Button -->
+
+                                                            <div class="col-sm-12 controls">
+                                                                <a id="btn-login" href="#" class="btn btn-default signX">Sign in</a>
+
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal for Sign up-->
+                                <div class="modal fade" id="signUp" role="dialog">
+                                    <div class="modal-dialog">
+
+                                        <!-- Modal content-->
+                                        <div class="displayOfModalContent">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4>Welcome to Vl Fa</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal" role="form">
+
+                                                        <div style="margin-bottom: 25px" class="input-group">
+                                                            <span class="input-group-addon"><i
+                                                                class="glyphicon glyphicon-user"></i></span> <input
+                                                                id="login-username" type="text" class="form-control"
+                                                                name="username" value="" placeholder="username">
+                                                            </div>
+                                                            <div style="margin-bottom: 25px" class="input-group">
+                                                                <span class="input-group-addon"><i
+                                                                    class="glyphicon glyphicon-lock"></i></span> <input
+                                                                    id="login-password" type="password" class="form-control"
+                                                                    name="password" placeholder="password">
+                                                                </div>
+                                                                <div style="margin-bottom: 25px" class="input-group">
+                                                                    <span class="input-group-addon"><i
+                                                                        class="glyphicon glyphicon-envelope"></i></span> <input
+                                                                        id="signUp-email" type="password" class="form-control"
+                                                                        name="email" placeholder="email">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <div class="checkbox">
+                                                                            <label> <input id="login-remember" type="checkbox"
+                                                                                name="remember" value="1"> Remember me
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div style="margin-top: 10px" class="form-group">
+                                                                        <!-- Button -->
+
+                                                                        <div class="col-sm-12 controls">
+                                                                            <a id="btn-login" href="#" class="btn btn-default signX">Sign up </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script type="text/javascript" src="assets/js/modernizr.custom.86080.js"></script>
+                                            <script src="assets/js/jquery.min.js"></script>
+                                            <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+                                            <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js"></script>
+                                        </body>
+                                        </html>

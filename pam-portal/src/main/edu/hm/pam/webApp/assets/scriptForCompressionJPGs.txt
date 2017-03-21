@@ -1,0 +1,1 @@
+for i in *.jpg; do convert -resize -1000x1000 -quality 85 $i `basename $i .jpg`-small.jpg; done
