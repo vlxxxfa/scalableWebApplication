@@ -3,7 +3,6 @@ package edu.hm.pam.impl;
 import edu.hm.pam.UserDAO;
 import edu.hm.pam.UserService;
 import edu.hm.pam.entity.ext.User;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserServiceImpl implements UserService {
 
-    private final static Logger LOGGER = Logger.getLogger( UserServiceImpl.class.getName() );
+    // private final static Logger LOGGER = Logger.getLogger(UserServiceImpl.class.getName());
 
-    UserDAO userDAO;
+    private UserDAO userDAO;
 
     @Autowired
     public UserServiceImpl(UserDAO userDAO) {
@@ -23,11 +22,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(User user) {
-        if(LOGGER.isTraceEnabled()) {
-            LOGGER.trace("user obtained in service module "+ user);
-        }
-        userDAO.createUser(user);
+    public boolean createUser(User user) {
+        return this.userDAO.createUser(user);
     }
 
     @Override

@@ -7,7 +7,7 @@ import edu.hm.pam.entity.ext.User;
  */
 public interface UserDAO {
 
-    void createUser(User user);
+    boolean createUser(User user);
 
     User findUser(User user);
     //

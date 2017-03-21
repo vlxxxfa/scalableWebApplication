@@ -9,8 +9,8 @@ import edu.hm.pam.entity.ext.User;
 public class UserDAOMySQLDBImpl implements UserDAO {
 
     @Override
-    public void createUser(User user) {
-
+    public boolean createUser(User user) {
+        return false;
     }
 
     // @Override

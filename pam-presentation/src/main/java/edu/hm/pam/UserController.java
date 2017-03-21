@@ -27,13 +27,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "/createUser", method = RequestMethod.POST)
-    public void createUser(@RequestBody User user) {
-        this.userService.createUser(user);
+    @RequestMapping(path = "/createUser", method = RequestMethod.GET)
+    public boolean createUser(@RequestBody User user) {
+        return this.userService.createUser(user);
     }
 
     @RequestMapping(value = "/findUser", method = RequestMethod.GET)
-    public User findUser(@RequestBody User user){
+    public User findUser(@RequestBody User user) {
         return this.userService.findUser(user);
     }
 
@@ -55,7 +55,7 @@ public class UserController {
     // }
 
     @RequestMapping(value = "/test")
-    public String doTest(){
+    public String doTest() {
         User user = new User();
         user.setUserName("admin");
         user.setPassWord("admin");
@@ -76,7 +76,10 @@ public class UserController {
         photoAlbumList.add(photoAlbum);
 
         user.setPhotoAlben(photoAlbumList);
-        this.userService.createUser(user);
-        return "Done: User created";
+
+        if (findUser(user) == null) {
+            return "Done: User doesn't find";
+        }
+        return "Done: User find";
     }
 }

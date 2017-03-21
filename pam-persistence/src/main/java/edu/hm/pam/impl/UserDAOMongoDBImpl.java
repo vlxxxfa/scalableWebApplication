@@ -1,13 +1,20 @@
 package edu.hm.pam.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.UserDAO;
+import edu.hm.pam.entity.ext.Photo;
+import edu.hm.pam.entity.ext.PhotoAlbum;
 import edu.hm.pam.entity.ext.User;
 import org.bson.Document;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vlfa on 15.03.17.
@@ -17,29 +24,99 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
     MongoClient mongo = new MongoClient("localhost", 27017);
     MongoDatabase db = mongo.getDatabase("qwertz");
-    MongoCollection collection = db.getCollection("users");
+    MongoCollection<Document> collection = db.getCollection("users");
 
     @Override
-    public void createUser(User user) {
+    public boolean createUser(User user) {
+
+        boolean status = true;
 
         Gson gson = new Gson();
         String str_representation = gson.toJson(user);
-        Document doc = Document.parse(str_representation);
 
-        collection.insertOne(doc);
+        try {
+            Document doc = Document.parse(str_representation);
+            collection.insertOne(doc);
+        } catch (MongoWriteException e) {
+            status = false;
+        }
+        return status;
     }
 
     @Override
     public User findUser(User user) {
-        // DBObject query = new BasicDBObject("_id", user.getId());
-        // DBCursor cursor = collection.find(query);
-        return null;
+
+        Document document;
+        User foundUser;
+
+        try {
+            document = collection.find(new Document("userName", user.getUserName())).first();
+            String toJson = document.toJson();
+            foundUser = new Gson().fromJson(toJson, User.class);
+        } catch (NullPointerException n) {
+            foundUser = null;
+        } catch (JsonSyntaxException j) {
+            foundUser = null;
+        }
+        return foundUser;
     }
-    //
+
+    public User findUser2(User user) {
+
+        Document document = collection.find(new Document("userName", user.getUserName())).first();
+        String json = document.toJson();
+        System.out.println(document.toJson());
+
+        Gson g = new Gson();
+        User user1 = g.fromJson(json, User.class);
+
+        return user1;
+    }
+
+    public static void main(String[] args) {
+
+        UserDAOMongoDBImpl userDAOMongoDB = new UserDAOMongoDBImpl();
+
+        User user = new User();
+        user.setUserName("admin");
+        user.setPassWord("admin");
+
+        Photo photo1 = new Photo();
+        photo1.setTitle("photoTitle1");
+        Photo photo2 = new Photo();
+        photo2.setTitle("photoTitle2");
+        List<Photo> photoList = new ArrayList<>();
+        photoList.add(photo1);
+        photoList.add(photo2);
+
+        PhotoAlbum photoAlbum = new PhotoAlbum();
+        photoAlbum.setAlbumTitle("AlbumTItle");
+        photoAlbum.setListOfPhotos(photoList);
+
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        photoAlbumList.add(photoAlbum);
+
+        user.setPhotoAlben(photoAlbumList);
+        boolean status = userDAOMongoDB.createUser(user);
+        // User status = userDAOMongoDB.findUser(user);
+
+        System.out.println(status);
+    }
+
     // @Override
     // public User updateUser(User user) {
     //     return null;
     // }
+
+    //
+    // public User findUser2(User user) {
+    //
+    //     Bson filter = new Document("userName",user.getUserName());
+    //     Object obj = collection.find().filter(filter).first();
+    //
+    //     return (User) obj;
+    // }
+
     //
     // @Override
     // public void deleteUser(User user) {
@@ -111,4 +188,5 @@ public class UserDAOMongoDBImpl implements UserDAO {
     //
     //     // Key<User> readuser = datastore.getKey()
     // }
+
 }
