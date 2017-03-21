@@ -22,15 +22,15 @@ import java.util.List;
 @Service
 public class UserDAOMongoDBImpl implements UserDAO {
 
-    MongoClient mongo = new MongoClient("localhost", 27017);
-    MongoDatabase db = mongo.getDatabase("qwertz");
-    MongoCollection<Document> collection = db.getCollection("users");
+    private MongoClient mongo = new MongoClient("localhost", 27017);
+    private MongoDatabase db = mongo.getDatabase("qwertz");
+    private MongoCollection<Document> collection = db.getCollection("users");
 
-    Document document;
-    User foundUser;
-    User updatedUser;
-    boolean status = true;
-    Gson gson;
+    private Document document;
+    private User foundUser;
+    private User updatedUser;
+    private boolean status = true;
+    private Gson gson;
 
     @Override
     public boolean createUser(User user) {
@@ -75,23 +75,31 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
             String toJson = newDocument.toJson();
             updatedUser = this.findUser(new Gson().fromJson(toJson, User.class));
-        } catch (NullPointerException npe){
+        } catch (NullPointerException npe) {
             updatedUser = null;
         }
         return updatedUser;
     }
 
-    // @Override
-    // public void deleteUser(User user) {
-    //
-    // }
+    @Override
+    public boolean deleteUser(User user) {
+        try {
+            document = collection.findOneAndDelete(new Document("userName", user.getUserName()));
+            if (collection.find(new Document("userName", user.getUserName())) == null) {
+                return status;
+            }
+        } catch (NullPointerException npe) {
+            status = false;
+        }
+        return status;
+    }
 
     public static void main(String[] args) {
 
         UserDAOMongoDBImpl userDAOMongoDB = new UserDAOMongoDBImpl();
 
         User user = new User();
-        user.setUserName("admin");
+        user.setUserName("create");
         user.setPassWord("xxx");
 
         Photo photo1 = new Photo();
@@ -111,8 +119,9 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         user.setPhotoAlben(photoAlbumList);
         // boolean status = userDAOMongoDB.createUser(user);
+        boolean status = userDAOMongoDB.deleteUser(user);
         // User status = userDAOMongoDB.findUser(user);
-        User status = userDAOMongoDB.updateUser(user);
+        // User status = userDAOMongoDB.updateUser(user);
 
         System.out.println(status);
     }

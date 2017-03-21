@@ -27,11 +27,11 @@ public class UserDAOMySQLDBImpl implements UserDAO {
     public User updateUser(User user) {
         return null;
     }
-    //
-    // @Override
-    // public void deleteUser(User user) {
-    //
-    // }
+
+    @Override
+    public boolean deleteUser(User user) {
+        return false;
+    }
     //
     // @Override
     // public User logIn(User user) {

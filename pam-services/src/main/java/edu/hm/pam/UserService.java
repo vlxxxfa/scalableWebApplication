@@ -12,9 +12,9 @@ public interface UserService {
     User findUser(User user);
 
     User updateUser(User user);
-    //
-    // void deleteUser(User user);
-    //
+
+    boolean deleteUser(User user);
+
     // User logIn(User user);
     //
     // User logOut(User user);
