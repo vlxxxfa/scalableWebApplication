@@ -39,7 +39,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
         String str_representation = gson.toJson(user);
 
         try {
-            Document doc = Document.parse(str_representation);
+            Document doc = Document.parse(str_representation).append("_id", user.getUserName());
             collection.insertOne(doc);
         } catch (MongoWriteException e) {
             status = false;
@@ -51,7 +51,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
     public User findUser(User user) {
 
         try {
-            document = collection.find(new Document("userName", user.getUserName())).first();
+            document = collection.find(new Document("_id", user.getUserName())).first();
             String toJson = document.toJson();
             foundUser = new Gson().fromJson(toJson, User.class);
         } catch (NullPointerException npe) {
@@ -69,7 +69,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
         String str_representation = gson.toJson(user);
 
         try {
-            document = collection.find(new Document("userName", user.getUserName())).first();
+            document = collection.find(new Document("_id", user.getUserName())).first();
             Document newDocument = Document.parse(str_representation);
             collection.findOneAndReplace(document, newDocument);
 
@@ -84,8 +84,8 @@ public class UserDAOMongoDBImpl implements UserDAO {
     @Override
     public boolean deleteUser(User user) {
         try {
-            document = collection.findOneAndDelete(new Document("userName", user.getUserName()));
-            if (collection.find(new Document("userName", user.getUserName())) == null) {
+            document = collection.findOneAndDelete(new Document("_id", user.getUserName()));
+            if (collection.find(new Document("_id", user.getUserName())) == null) {
                 return status;
             }
         } catch (NullPointerException npe) {
@@ -99,8 +99,9 @@ public class UserDAOMongoDBImpl implements UserDAO {
         UserDAOMongoDBImpl userDAOMongoDB = new UserDAOMongoDBImpl();
 
         User user = new User();
+
         user.setUserName("create");
-        user.setPassWord("xxx");
+        user.setPassWord("find");
 
         Photo photo1 = new Photo();
         photo1.setTitle("xxx");

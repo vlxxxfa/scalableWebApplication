@@ -10,7 +10,7 @@ import java.util.List;
 // @Entity(value="user")
 public class User extends BaseEntity {
 
-    private String userName;
+    // private String userName;
 
     private String passWord;
 

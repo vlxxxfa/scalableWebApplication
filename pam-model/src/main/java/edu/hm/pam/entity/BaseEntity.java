@@ -11,15 +11,17 @@ public abstract class BaseEntity {
     // @Property("id")
     protected ObjectId id;
 
-    public BaseEntity() {
+    protected BaseEntity() {
         super();
     }
 
-    public ObjectId getId() {
+    protected ObjectId getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    protected void setId(ObjectId id) {
         this.id = id;
     }
+
+    protected String userName;
 }
