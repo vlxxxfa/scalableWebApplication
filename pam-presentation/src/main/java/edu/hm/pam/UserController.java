@@ -1,6 +1,6 @@
 package edu.hm.pam;
 
-import edu.hm.pam.entity.ext.User;
+import edu.hm.pam.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by vlfa on 15.03.17.
  */
 @RestController
+@RequestMapping(value = "/user")
 public class UserController {
 
     // final static Logger LOGGER = Logger.getLogger( UserController.class.getName() );
@@ -37,19 +38,12 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @RequestMapping(value = "/deleteUser", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
     public boolean deleteUser(@RequestBody User user) {
         return userService.deleteUser(user);
     }
-    //
-    // public User logIn(@RequestBody User user) {
-    //     return userService.logIn(user);
-    // }
-    //
-    // public User logOut(@RequestBody User user) {
-    //     return userService.logOut(user);
-    // }
 
+    // Testing
     // @RequestMapping(value = "/create", method = RequestMethod.GET)
     // public User create() {
     //     User user = new User();
@@ -63,39 +57,39 @@ public class UserController {
     // }
     //
     // @RequestMapping(value = "/find", method = RequestMethod.GET)
-    // public User find() {
+    // public String find() {
     //     User user = new User();
     //     user.setUserName("created");
     //     user.setPassWord("find");
     //
     //     if (findUser(user) == null) {
-    //         return null;
+    //         return "Object doesn't found";
     //     }
-    //     return findUser(user);
+    //     return "Object founded";
     // }
     //
     // @RequestMapping(value = "/update", method = RequestMethod.GET)
-    // public User update() {
+    // public String update() {
     //     User user = new User();
     //     user.setUserName("created");
     //     user.setPassWord("update");
     //
     //     if (updateUser(user) == null) {
-    //         return null;
+    //         return "Object doesn't found";
     //     }
-    //     return user;
+    //     return "Object updated";
     // }
     //
-    // @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    // public User delete() {
+    // @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    // public String delete() {
     //     User user = new User();
-    //     user.setUserName("update");
+    //     user.setUserName("created");
     //     user.setPassWord("delete");
     //
     //     if (!deleteUser(user)) {
-    //         return null;
+    //         return "Object doesn't found";
     //     }
-    //     return user;
+    //     return "Object deleted";
     // }
 
 }

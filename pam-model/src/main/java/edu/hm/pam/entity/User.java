@@ -1,6 +1,4 @@
-package edu.hm.pam.entity.ext;
-
-import edu.hm.pam.entity.BaseEntity;
+package edu.hm.pam.entity;
 
 import java.util.List;
 
@@ -8,26 +6,15 @@ import java.util.List;
  * Created by vlfa on 15.03.17.
  */
 // @Entity(value="user")
-public class User extends BaseEntity {
+public class User {
 
-    // private String userName;
+    private String userName;
 
     private String passWord;
 
     private String email;
 
     private List<PhotoAlbum> photoAlben;
-
-    // public User(String userName, String passWord) {
-    //     this.userName = userName;
-    //     this.passWord = passWord;
-    // }
-    //
-    // public User(String userName, String passWord, String email) {
-    //     this.userName = userName;
-    //     this.passWord = passWord;
-    //     this.email = email;
-    // }
 
     public String getUserName() {
         return userName;

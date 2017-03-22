@@ -7,9 +7,9 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.UserDAO;
-import edu.hm.pam.entity.ext.Photo;
-import edu.hm.pam.entity.ext.PhotoAlbum;
-import edu.hm.pam.entity.ext.User;
+import edu.hm.pam.entity.Photo;
+import edu.hm.pam.entity.PhotoAlbum;
+import edu.hm.pam.entity.User;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,9 @@ import java.util.List;
 @Service
 public class UserDAOMongoDBImpl implements UserDAO {
 
-    final static Logger logger = LoggerFactory.getLogger(UserDAOMongoDBImpl.class);
+    static final Logger logger = LoggerFactory.getLogger(UserDAOMongoDBImpl.class);
 
+    // // TODO: 22.03.17 to insert a MongoConnection in an exclude class
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");

@@ -1,6 +1,4 @@
-package edu.hm.pam.entity.ext;
-
-import edu.hm.pam.entity.BaseEntity;
+package edu.hm.pam.entity;
 
 import java.util.List;
 
@@ -8,7 +6,7 @@ import java.util.List;
  * Created by vlfa on 15.03.17.
  */
 // @Entity(value="photoAlbum")
-public class PhotoAlbum extends BaseEntity {
+public class PhotoAlbum {
 
     private String albumTitle;
 

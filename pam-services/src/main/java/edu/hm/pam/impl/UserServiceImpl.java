@@ -2,7 +2,7 @@ package edu.hm.pam.impl;
 
 import edu.hm.pam.UserDAO;
 import edu.hm.pam.UserService;
-import edu.hm.pam.entity.ext.User;
+import edu.hm.pam.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserServiceImpl implements UserService {
-
-    // private final static Logger LOGGER = Logger.getLogger(UserServiceImpl.class.getName());
 
     private UserDAO userDAO;
 

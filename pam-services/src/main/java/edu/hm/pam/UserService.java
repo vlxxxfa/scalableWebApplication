@@ -1,6 +1,6 @@
 package edu.hm.pam;
 
-import edu.hm.pam.entity.ext.User;
+import edu.hm.pam.entity.User;
 
 /**
  * Created by vlfa on 15.03.17.

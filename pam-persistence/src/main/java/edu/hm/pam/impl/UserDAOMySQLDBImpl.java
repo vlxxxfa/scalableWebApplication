@@ -1,7 +1,7 @@
 package edu.hm.pam.impl;
 
 import edu.hm.pam.UserDAO;
-import edu.hm.pam.entity.ext.User;
+import edu.hm.pam.entity.User;
 
 /**
  * Created by vlfa on 16.03.17.
