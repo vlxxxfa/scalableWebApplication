@@ -25,4 +25,16 @@ public class PhotoAlbum {
     public void setUsers(List<User> users) {
         this.users = users;
     }
+
+    public String getAlbumTitle() {
+        return albumTitle;
+    }
+
+    public List<Photo> getListOfPhotos() {
+        return listOfPhotos;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
 }

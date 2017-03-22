@@ -29,8 +29,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("photos");
-    private MongoCollection<Document> collectionForUsers = db.getCollection("users");
-
 
     @Override
     public boolean savePhoto(Photo photo) {

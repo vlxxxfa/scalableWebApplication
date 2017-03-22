@@ -44,47 +44,47 @@ public class PhotoController {
     }
 
     // Testing
-    // @RequestMapping(value = "/create", method = RequestMethod.GET)
-    // public Photo create() {
-    //     Photo photo = new Photo();
-    //     photo.setTitle("Amerika");
-    //     if (!savePhoto(photo)) {
-    //         return null;
-    //     }
-    //     return photo;
-    // }
-    //
-    // @RequestMapping(value = "/find", method = RequestMethod.GET)
-    // public String find() {
-    //     Photo photo = new Photo();
-    //     photo.setTitle("Amerika");
-    //
-    //     if (updatePhoto(photo) == null) {
-    //         return "Object doesn't found";
-    //     }
-    //     return "Object founded";
-    // }
-    //
-    // @RequestMapping(value = "/update", method = RequestMethod.GET)
-    // public String update() {
-    //     Photo photo = new Photo();
-    //     photo.setTitle("Amerika");
-    //
-    //     if (updatePhoto(photo) == null) {
-    //         return "Object is null, no updated";
-    //     }
-    //     return "Object exist's, UPDATED";
-    // }
-    //
-    // @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    // public String delete() {
-    //
-    //     Photo photo = new Photo();
-    //     photo.setTitle("Amerika");
-    //
-    //     if (!deletePhoto(photo)) {
-    //         return "Object is null, no deleted";
-    //     }
-    //     return "Object is deleted";
-    // }
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public Photo create() {
+        Photo photo = new Photo();
+        photo.setTitle("Amerika");
+        if (!savePhoto(photo)) {
+            return null;
+        }
+        return photo;
+    }
+
+    @RequestMapping(value = "/find", method = RequestMethod.GET)
+    public String find() {
+        Photo photo = new Photo();
+        photo.setTitle("Amerika");
+
+        if (updatePhoto(photo) == null) {
+            return "Object doesn't found";
+        }
+        return "Object founded";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    public String update() {
+        Photo photo = new Photo();
+        photo.setTitle("Amerika");
+
+        if (updatePhoto(photo) == null) {
+            return "Object is null, no updated";
+        }
+        return "Object exist's, UPDATED";
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public String delete() {
+
+        Photo photo = new Photo();
+        photo.setTitle("Amerika");
+
+        if (!deletePhoto(photo)) {
+            return "Object is null, no deleted";
+        }
+        return "Object is deleted";
+    }
 }

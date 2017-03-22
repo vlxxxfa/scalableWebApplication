@@ -44,52 +44,52 @@ public class UserController {
     }
 
     // Testing
-    // @RequestMapping(value = "/create", method = RequestMethod.GET)
-    // public User create() {
-    //     User user = new User();
-    //     user.setUserName("created");
-    //     user.setPassWord("create");
-    //
-    //     if (!createUser(user)) {
-    //         return null;
-    //     }
-    //     return user;
-    // }
-    //
-    // @RequestMapping(value = "/find", method = RequestMethod.GET)
-    // public String find() {
-    //     User user = new User();
-    //     user.setUserName("created");
-    //     user.setPassWord("find");
-    //
-    //     if (findUser(user) == null) {
-    //         return "Object doesn't found";
-    //     }
-    //     return "Object founded";
-    // }
-    //
-    // @RequestMapping(value = "/update", method = RequestMethod.GET)
-    // public String update() {
-    //     User user = new User();
-    //     user.setUserName("created");
-    //     user.setPassWord("update");
-    //
-    //     if (updateUser(user) == null) {
-    //         return "Object doesn't found";
-    //     }
-    //     return "Object updated";
-    // }
-    //
-    // @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    // public String delete() {
-    //     User user = new User();
-    //     user.setUserName("created");
-    //     user.setPassWord("delete");
-    //
-    //     if (!deleteUser(user)) {
-    //         return "Object doesn't found";
-    //     }
-    //     return "Object deleted";
-    // }
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public User create() {
+        User user = new User();
+        user.setUserName("created");
+        user.setPassWord("create");
+
+        if (!createUser(user)) {
+            return null;
+        }
+        return user;
+    }
+
+    @RequestMapping(value = "/find", method = RequestMethod.GET)
+    public String find() {
+        User user = new User();
+        user.setUserName("created");
+        user.setPassWord("find");
+
+        if (findUser(user) == null) {
+            return "Object doesn't found";
+        }
+        return "Object founded";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    public String update() {
+        User user = new User();
+        user.setUserName("created");
+        user.setPassWord("update");
+
+        if (updateUser(user) == null) {
+            return "Object doesn't found";
+        }
+        return "Object updated";
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public String delete() {
+        User user = new User();
+        user.setUserName("created");
+        user.setPassWord("delete");
+
+        if (!deleteUser(user)) {
+            return "Object doesn't found";
+        }
+        return "Object deleted";
+    }
 
 }
