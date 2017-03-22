@@ -11,6 +11,8 @@ import edu.hm.pam.entity.ext.Photo;
 import edu.hm.pam.entity.ext.PhotoAlbum;
 import edu.hm.pam.entity.ext.User;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,27 +24,26 @@ import java.util.List;
 @Service
 public class UserDAOMongoDBImpl implements UserDAO {
 
+    final static Logger logger = LoggerFactory.getLogger(UserDAOMongoDBImpl.class);
+
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");
 
-    private Document document;
-    private User foundUser;
-    private User updatedUser;
-    private boolean status = true;
-    private Gson gson;
-
     @Override
     public boolean createUser(User user) {
 
-        gson = new Gson();
+        boolean status;
+        Gson gson = new Gson();
         String str_representation = gson.toJson(user);
 
         try {
             Document doc = Document.parse(str_representation).append("_id", user.getUserName());
             collection.insertOne(doc);
-        } catch (MongoWriteException e) {
+            status = true;
+        } catch (MongoWriteException mwe) {
             status = false;
+            logger.error(mwe.getMessage(), mwe);
         }
         return status;
     }
@@ -50,14 +51,19 @@ public class UserDAOMongoDBImpl implements UserDAO {
     @Override
     public User findUser(User user) {
 
+        User foundUser;
+
         try {
-            document = collection.find(new Document("_id", user.getUserName())).first();
+            Document document = collection.find(new Document("_id", user.getUserName())).first();
             String toJson = document.toJson();
             foundUser = new Gson().fromJson(toJson, User.class);
         } catch (NullPointerException npe) {
             foundUser = null;
+            logger.error(npe.getMessage(), npe);
         } catch (JsonSyntaxException jse) {
             foundUser = null;
+            logger.error(jse.getMessage(), jse);
+
         }
         return foundUser;
     }
@@ -65,11 +71,11 @@ public class UserDAOMongoDBImpl implements UserDAO {
     @Override
     public User updateUser(User user) {
 
-        gson = new Gson();
-        String str_representation = gson.toJson(user);
+        String str_representation = new Gson().toJson(user);
+        User updatedUser;
 
         try {
-            document = collection.find(new Document("_id", user.getUserName())).first();
+            Document document = collection.find(new Document("_id", user.getUserName())).first();
             Document newDocument = Document.parse(str_representation);
             collection.findOneAndReplace(document, newDocument);
 
@@ -77,19 +83,26 @@ public class UserDAOMongoDBImpl implements UserDAO {
             updatedUser = this.findUser(new Gson().fromJson(toJson, User.class));
         } catch (NullPointerException npe) {
             updatedUser = null;
+            logger.error(npe.getMessage(), npe);
         }
         return updatedUser;
     }
 
     @Override
     public boolean deleteUser(User user) {
+
+        boolean status;
+
         try {
-            document = collection.findOneAndDelete(new Document("_id", user.getUserName()));
-            if (collection.find(new Document("_id", user.getUserName())) == null) {
-                return status;
+            if (findUser(user) != null) {
+                collection.findOneAndDelete(new Document("_id", user.getUserName()));
+                status = true;
+            } else {
+                status = false;
             }
         } catch (NullPointerException npe) {
             status = false;
+            logger.error(npe.getMessage(), npe);
         }
         return status;
     }
@@ -119,8 +132,8 @@ public class UserDAOMongoDBImpl implements UserDAO {
         photoAlbumList.add(photoAlbum);
 
         user.setPhotoAlben(photoAlbumList);
-        // boolean status = userDAOMongoDB.createUser(user);
-        boolean status = userDAOMongoDB.deleteUser(user);
+        boolean status = userDAOMongoDB.createUser(user);
+        // boolean status = userDAOMongoDB.deleteUser(user);
         // User status = userDAOMongoDB.findUser(user);
         // User status = userDAOMongoDB.updateUser(user);
 

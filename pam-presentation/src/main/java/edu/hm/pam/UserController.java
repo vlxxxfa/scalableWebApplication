@@ -22,7 +22,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "/createUser", method = RequestMethod.PUT)
+    @RequestMapping(path = "/createUser", method = RequestMethod.GET)
     public boolean createUser(@RequestBody User user) {
         return this.userService.createUser(user);
     }
@@ -50,22 +50,10 @@ public class UserController {
     //     return userService.logOut(user);
     // }
 
-    // @RequestMapping(value = "/delete")
-    // public User delete() {
-    //     User user = new User();
-    //     user.setUserName("delete");
-    //     user.setPassWord("delete");
-    //
-    //     if (!deleteUser(user)) {
-    //         return null;
-    //     }
-    //     return user;
-    // }
-    //
-    // @RequestMapping(value = "/create")
+    // @RequestMapping(value = "/create", method = RequestMethod.GET)
     // public User create() {
     //     User user = new User();
-    //     user.setUserName("create");
+    //     user.setUserName("created");
     //     user.setPassWord("create");
     //
     //     if (!createUser(user)) {
@@ -74,25 +62,37 @@ public class UserController {
     //     return user;
     // }
     //
-    // @RequestMapping(value = "/find")
+    // @RequestMapping(value = "/find", method = RequestMethod.GET)
     // public User find() {
     //     User user = new User();
-    //     user.setUserName("find");
+    //     user.setUserName("created");
     //     user.setPassWord("find");
     //
     //     if (findUser(user) == null) {
     //         return null;
     //     }
-    //     return user;
+    //     return findUser(user);
     // }
     //
-    // @RequestMapping(value = "/update")
+    // @RequestMapping(value = "/update", method = RequestMethod.GET)
     // public User update() {
     //     User user = new User();
-    //     user.setUserName("update");
+    //     user.setUserName("created");
     //     user.setPassWord("update");
     //
     //     if (updateUser(user) == null) {
+    //         return null;
+    //     }
+    //     return user;
+    // }
+    //
+    // @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    // public User delete() {
+    //     User user = new User();
+    //     user.setUserName("update");
+    //     user.setPassWord("delete");
+    //
+    //     if (!deleteUser(user)) {
     //         return null;
     //     }
     //     return user;
