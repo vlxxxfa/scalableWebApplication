@@ -36,7 +36,7 @@ public class UserDAOMySQLDBImpl implements UserDAO {
     }
 
     @Override
-    public List<User> findAllUser() {
+    public List<User> findAllUsers() {
         return null;
     }
     //

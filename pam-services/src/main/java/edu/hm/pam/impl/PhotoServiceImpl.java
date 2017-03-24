@@ -6,6 +6,8 @@ import edu.hm.pam.entity.Photo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -39,4 +41,8 @@ public class PhotoServiceImpl implements PhotoService {
         return photoDAO.deletePhoto(photo);
     }
 
+    @Override
+    public List<Photo> findAllPhotos() {
+        return photoDAO.findAllPhotos();
+    }
 }

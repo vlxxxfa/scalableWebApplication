@@ -6,6 +6,8 @@ import edu.hm.pam.entity.PhotoAlbum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -37,6 +39,11 @@ public class PhotoAlbumServiceImpl implements PhotoAlbumService {
     @Override
     public boolean deletePhotoAlbum(PhotoAlbum photoAlbum) {
         return photoAlbumDAO.deletePhotoAlbum(photoAlbum);
+    }
+
+    @Override
+    public List<PhotoAlbum> findAllPhotoAlben() {
+        return photoAlbumDAO.findAllPhotoAlben();
     }
 
 }

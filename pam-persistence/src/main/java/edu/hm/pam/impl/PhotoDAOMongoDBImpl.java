@@ -103,13 +103,37 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         return status;
     }
 
+    @Override
+    public List<Photo> findAllPhotos() {
+
+        Photo foundPhoto;
+        List<Photo> photoList = new ArrayList<>();
+
+        try {
+            List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
+
+            for (Document document : listOfFoundedDocuments) {
+                String toJson = document.toJson();
+                foundPhoto = new Gson().fromJson(toJson, Photo.class);
+                photoList.add(foundPhoto);
+            }
+        } catch (NullPointerException npe) {
+            foundPhoto = null;
+            logger.error(npe.getMessage(), npe);
+        } catch (JsonSyntaxException jse) {
+            foundPhoto = null;
+            logger.error(jse.getMessage(), jse);
+        }
+        return photoList;
+    }
+
 
     public static void main(String[] args) {
 
         PhotoDAO photoDAOMongoDB = new PhotoDAOMongoDBImpl();
 
         Photo photo = new Photo();
-        photo.setTitle("Amerika");
+        photo.setTitle("sadasdasdasda");
         Photo photo1 = new Photo();
         photo1.setTitle("Bayern");
         Photo photo2 = new Photo();
@@ -129,10 +153,11 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
         // photo.setPhotoAlben(photoAlbumList);
         // boolean status = photoDAOMongoDB.savePhoto(photo);
-        boolean status = photoDAOMongoDB.deletePhoto(photo);
+        // boolean status = photoDAOMongoDB.deletePhoto(photo);
         // Photo status = photoDAOMongoDB.findPhoto(photo);
         // Photo status = photoDAOMongoDB.updatePhoto(photo);
+        System.out.print(photoDAOMongoDB.findAllPhotos());
 
-        System.out.println(status);
+        // System.out.println(status);
     }
 }

@@ -7,11 +7,15 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.PhotoAlbumDAO;
+import edu.hm.pam.entity.Photo;
 import edu.hm.pam.entity.PhotoAlbum;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vlfa on 16.03.17.
@@ -24,7 +28,7 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
     // // TODO: 22.03.17 to insert a MongoConnection in an exclude class
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
-    private MongoCollection<Document> collection = db.getCollection("photoAlbums");
+    private MongoCollection<Document> collection = db.getCollection("photoAlben");
 
     @Override
     public boolean savePhotoAlbum(PhotoAlbum photoAlbum) {
@@ -100,35 +104,59 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         return status;
     }
 
-    // public static void main(String[] args) {
-    //
-    //     PhotoDAO photoDAOMongoDB = new PhotoAlbumDAOMongoDBImpl();
-    //
-    //     Photo photo = new Photo();
-    //     photo.setTitle("Amerika");
-    //     Photo photo1 = new Photo();
-    //     photo1.setTitle("Bayern");
-    //     Photo photo2 = new Photo();
-    //     photo2.setTitle("Paris");
-    //
-    //     List<Photo> photoList = new ArrayList<>();
-    //     photoList.add(photo);
-    //     photoList.add(photo1);
-    //     photoList.add(photo2);
-    //
-    //     PhotoAlbum photoAlbum = new PhotoAlbum();
-    //     photoAlbum.setAlbumTitle("world");
-    //     photoAlbum.setListOfPhotos(photoList);
-    //
-    //     List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-    //     photoAlbumList.add(photoAlbum);
-    //
-    //     // photo.setPhotoAlben(photoAlbumList);
-    //     // boolean status = photoDAOMongoDB.savePhoto(photo);
-    //     boolean status = photoDAOMongoDB.deletePhoto(photo);
-    //     // Photo status = photoDAOMongoDB.findPhoto(photo);
-    //     // Photo status = photoDAOMongoDB.updatePhoto(photo);
-    //
-    //     System.out.println(status);
-    // }
+    @Override
+    public List<PhotoAlbum> findAllPhotoAlben() {
+
+        PhotoAlbum foundPhotoAlbum;
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+
+        try {
+            List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
+
+            for (Document document : listOfFoundedDocuments) {
+                String toJson = document.toJson();
+                foundPhotoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
+                photoAlbumList.add(foundPhotoAlbum);
+            }
+        } catch (NullPointerException npe) {
+            foundPhotoAlbum = null;
+            logger.error(npe.getMessage(), npe);
+        } catch (JsonSyntaxException jse) {
+            foundPhotoAlbum = null;
+            logger.error(jse.getMessage(), jse);
+        }
+        return photoAlbumList;
+    }
+
+    public static void main(String[] args) {
+
+        PhotoAlbumDAO photoAlbumDAOMongoDB = new PhotoAlbumDAOMongoDBImpl();
+
+        Photo photo = new Photo();
+        photo.setTitle("London");
+        Photo photo1 = new Photo();
+        photo1.setTitle("Bayern");
+        Photo photo2 = new Photo();
+        photo2.setTitle("Paris");
+
+        List<Photo> photoList = new ArrayList<>();
+        photoList.add(photo);
+        photoList.add(photo1);
+        photoList.add(photo2);
+
+        PhotoAlbum photoAlbum = new PhotoAlbum();
+        photoAlbum.setAlbumTitle("album");
+        photoAlbum.setListOfPhotos(photoList);
+
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        photoAlbumList.add(photoAlbum);
+
+        // photo.setPhotoAlben(photoAlbumList);
+        boolean status = photoAlbumDAOMongoDB.savePhotoAlbum(photoAlbum);
+        // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
+        // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
+        // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);
+
+        System.out.println(status);
+    }
 }

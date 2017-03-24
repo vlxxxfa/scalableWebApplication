@@ -12,7 +12,7 @@ public class PhotoAlbum {
 
     private List<Photo> listOfPhotos;
 
-    private List<User> users;
+    private User user;
 
     public void setAlbumTitle(String albumTitle) {
         this.albumTitle = albumTitle;
@@ -20,10 +20,6 @@ public class PhotoAlbum {
 
     public void setListOfPhotos(List<Photo> listOfPhotos) {
         this.listOfPhotos = listOfPhotos;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     public String getAlbumTitle() {
@@ -34,7 +30,11 @@ public class PhotoAlbum {
         return listOfPhotos;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

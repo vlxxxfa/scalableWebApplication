@@ -17,7 +17,7 @@ public interface UserService {
 
     boolean deleteUser(User user);
 
-    List<User> findAllUser();
+    List<User> findAllUsers();
 
     // User logIn(User user);
     //

@@ -2,6 +2,8 @@ package edu.hm.pam;
 
 import edu.hm.pam.entity.Photo;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -14,4 +16,6 @@ public interface PhotoService {
     Photo updatePhoto(Photo photo);
 
     boolean deletePhoto(Photo photo);
+
+    List<Photo> findAllPhotos();
 }
