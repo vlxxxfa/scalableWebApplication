@@ -45,9 +45,9 @@ public class UserController {
         return userService.deleteUser(user);
     }
 
-    @RequestMapping(value = "/findAllUser", method = RequestMethod.GET)
-    public List<User> findAllUser(){
-        return userService.findAllUser();
+    @RequestMapping(value = "/findAllUsers", method = RequestMethod.GET)
+    public List<User> findAllUsers(){
+        return userService.findAllUsers();
     }
 
     // Testing

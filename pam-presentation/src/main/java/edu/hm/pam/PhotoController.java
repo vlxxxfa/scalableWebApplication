@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -42,6 +44,12 @@ public class PhotoController {
     public boolean deletePhoto(@RequestBody Photo photo) {
         return photoService.deletePhoto(photo);
     }
+
+    @RequestMapping(value = "/findAllPhotos", method = RequestMethod.GET)
+    public List<Photo> findAllPhotos() {
+        return photoService.findAllPhotos();
+    }
+
 
     // Testing
     @RequestMapping(value = "/create", method = RequestMethod.GET)
