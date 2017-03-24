@@ -3,6 +3,8 @@ package edu.hm.pam.impl;
 import edu.hm.pam.UserDAO;
 import edu.hm.pam.entity.User;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 16.03.17.
  */
@@ -31,6 +33,11 @@ public class UserDAOMySQLDBImpl implements UserDAO {
     @Override
     public boolean deleteUser(User user) {
         return false;
+    }
+
+    @Override
+    public List<User> findAllUser() {
+        return null;
     }
     //
     // @Override

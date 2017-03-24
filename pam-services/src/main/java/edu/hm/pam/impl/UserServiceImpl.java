@@ -6,6 +6,8 @@ import edu.hm.pam.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -37,6 +39,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(User user) {
         return userDAO.deleteUser(user);
+    }
+
+    @Override
+    public List<User> findAllUser(){
+        return userDAO.findAllUser();
     }
     //
     // @Override

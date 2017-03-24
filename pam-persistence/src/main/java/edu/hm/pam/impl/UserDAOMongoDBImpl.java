@@ -108,13 +108,38 @@ public class UserDAOMongoDBImpl implements UserDAO {
         return status;
     }
 
+    @Override
+    public List<User> findAllUser() {
+
+        User foundUser;
+        List<User> userList = new ArrayList<>();
+
+        try {
+            List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
+
+            for (Document document : listOfFoundedDocuments) {
+                String toJson = document.toJson();
+                foundUser = new Gson().fromJson(toJson, User.class);
+                System.out.print(foundUser);
+                userList.add(foundUser);
+            }
+        } catch (NullPointerException npe) {
+            foundUser = null;
+            logger.error(npe.getMessage(), npe);
+        } catch (JsonSyntaxException jse) {
+            foundUser = null;
+            logger.error(jse.getMessage(), jse);
+        }
+        return userList;
+    }
+
     public static void main(String[] args) {
 
         UserDAOMongoDBImpl userDAOMongoDB = new UserDAOMongoDBImpl();
 
         User user = new User();
 
-        user.setUserName("create");
+        user.setUserName("xxx");
         user.setPassWord("find");
 
         Photo photo1 = new Photo();
@@ -133,12 +158,13 @@ public class UserDAOMongoDBImpl implements UserDAO {
         photoAlbumList.add(photoAlbum);
 
         user.setPhotoAlben(photoAlbumList);
-        boolean status = userDAOMongoDB.createUser(user);
+        userDAOMongoDB.createUser(user);
         // boolean status = userDAOMongoDB.deleteUser(user);
         // User status = userDAOMongoDB.findUser(user);
         // User status = userDAOMongoDB.updateUser(user);
+        userDAOMongoDB.findAllUser();
 
-        System.out.println(status);
+        // System.out.println(status);
     }
 
     //

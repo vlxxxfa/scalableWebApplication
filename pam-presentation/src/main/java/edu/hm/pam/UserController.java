@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -41,6 +43,11 @@ public class UserController {
     @RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
     public boolean deleteUser(@RequestBody User user) {
         return userService.deleteUser(user);
+    }
+
+    @RequestMapping(value = "/findAllUser", method = RequestMethod.GET)
+    public List<User> findAllUser(){
+        return userService.findAllUser();
     }
 
     // Testing

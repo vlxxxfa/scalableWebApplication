@@ -2,6 +2,8 @@ package edu.hm.pam;
 
 import edu.hm.pam.entity.User;
 
+import java.util.List;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -14,6 +16,8 @@ public interface UserDAO {
     User updateUser(User user);
 
     boolean deleteUser(User user);
+
+    List<User> findAllUser();
 
     // User logIn(User user);
     //
