@@ -16,6 +16,11 @@ public class PhotoServiceImpl implements PhotoService {
 
     private PhotoDAO photoDAO;
 
+    @Override
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle){
+        return photoDAO.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
+    }
+
     @Autowired
     public PhotoServiceImpl(PhotoDAO photoDAO) {
         this.photoDAO = photoDAO;

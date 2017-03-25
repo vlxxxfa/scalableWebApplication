@@ -15,15 +15,16 @@ public class UserDAOMySQLDBImpl implements UserDAO {
         return false;
     }
 
+    @Override
+    public User findUserByUserName(String userName) {
+        return null;
+    }
+
     // @Override
     // public void createUser(User user) {
     //
     // }
     //
-    @Override
-    public User findUser(User user) {
-        return null;
-    }
 
     @Override
     public User updateUser(User user) {

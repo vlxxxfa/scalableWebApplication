@@ -9,6 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.PhotoDAO;
 import edu.hm.pam.entity.Photo;
 import edu.hm.pam.entity.PhotoAlbum;
+import edu.hm.pam.entity.User;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,37 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     // // TODO: 22.03.17 to insert a MongoConnection in an exclude class
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
-    private MongoCollection<Document> collection = db.getCollection("photos");
+    private MongoCollection<Document> collection = db.getCollection("users");
+
+    @Override
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) {
+        List<Photo> photoList = new ArrayList<>();
+        Document documentForFoundedPhotoAlbum = null;
+
+        try {
+            Document foundUser = collection.find(new Document("_id", userName)).first();
+            List<Document> embeddedPhotoAlbenOfUser = (List<Document>) foundUser.get("photoAlbumList");
+            for (Document searchDocumentByAlbumTitle : embeddedPhotoAlbenOfUser) {
+                if (searchDocumentByAlbumTitle.containsValue(albumTitle)) {
+                    documentForFoundedPhotoAlbum = searchDocumentByAlbumTitle;
+                    System.out.println("AlbumTitle found");
+                    break;
+                }
+            }
+            List<Document> embeddedPhotosOfPhotoAlbum = (List<Document>) documentForFoundedPhotoAlbum.get("photoList");
+
+            for (Document documentForPhoto : embeddedPhotosOfPhotoAlbum) {
+                String toJon = documentForPhoto.toJson();
+                Photo photo = new Gson().fromJson(toJon, Photo.class);
+                System.out.println(photo.getTitle());
+                photoList.add(photo);
+            }
+
+        } catch (NullPointerException npe) {
+            logger.error(npe.getMessage(), npe);
+        }
+        return photoList;
+    }
 
     @Override
     public boolean savePhoto(Photo photo) {
@@ -130,33 +161,23 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
     public static void main(String[] args) {
 
-        PhotoDAO photoDAOMongoDB = new PhotoDAOMongoDBImpl();
+        PhotoDAOMongoDBImpl photoDAOMongoDB = new PhotoDAOMongoDBImpl();
 
-        Photo photo = new Photo();
-        photo.setTitle("sadasdasdasda");
-        Photo photo1 = new Photo();
-        photo1.setTitle("Bayern");
-        Photo photo2 = new Photo();
-        photo2.setTitle("Paris");
+        User user = new User();
+        user.setUserName("Faerman");
+        user.setPassWord("password");
 
-        List<Photo> photoList = new ArrayList<>();
-        photoList.add(photo);
-        photoList.add(photo1);
-        photoList.add(photo2);
+        PhotoAlbum photoAlbum1 = new PhotoAlbum();
+        photoAlbum1.setAlbumTitle("");
 
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("world");
-        photoAlbum.setListOfPhotos(photoList);
-
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        photoAlbumList.add(photoAlbum);
 
         // photo.setPhotoAlben(photoAlbumList);
         // boolean status = photoDAOMongoDB.savePhoto(photo);
         // boolean status = photoDAOMongoDB.deletePhoto(photo);
         // Photo status = photoDAOMongoDB.findPhoto(photo);
         // Photo status = photoDAOMongoDB.updatePhoto(photo);
-        System.out.print(photoDAOMongoDB.findAllPhotos());
+        // System.out.print(photoDAOMongoDB.findAllPhotos());
+        System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("Faerman", "new Album1"));
 
         // System.out.println(status);
     }

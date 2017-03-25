@@ -10,24 +10,25 @@ public class PhotoAlbum {
 
     private String albumTitle;
 
-    private List<Photo> listOfPhotos;
+    private List<Photo> photoList;
 
     private User user;
-
-    public void setAlbumTitle(String albumTitle) {
-        this.albumTitle = albumTitle;
-    }
-
-    public void setListOfPhotos(List<Photo> listOfPhotos) {
-        this.listOfPhotos = listOfPhotos;
-    }
 
     public String getAlbumTitle() {
         return albumTitle;
     }
 
-    public List<Photo> getListOfPhotos() {
-        return listOfPhotos;
+    public List<Photo> getPhotoList() {
+        return photoList;
+    }
+
+    public void setAlbumTitle(String albumTitle) {
+
+        this.albumTitle = albumTitle;
+    }
+
+    public void setPhotoList(List<Photo> photoList) {
+        this.photoList = photoList;
     }
 
     public User getUser() {

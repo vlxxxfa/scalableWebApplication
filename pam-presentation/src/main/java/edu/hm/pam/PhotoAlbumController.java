@@ -2,16 +2,14 @@ package edu.hm.pam;
 
 import edu.hm.pam.entity.PhotoAlbum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * Created by vlfa on 15.03.17.
  */
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/photoAlbum")
 public class PhotoAlbumController {
@@ -25,14 +23,14 @@ public class PhotoAlbumController {
         this.photoAlbumService = photoAlbumService;
     }
 
-    @RequestMapping(path = "/savePhotoAlbum", method = RequestMethod.GET)
-    public boolean savePhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
-        return this.photoAlbumService.savePhotoAlbum(photoAlbum);
+    @RequestMapping(path = "findAllPhotoAlbenByUserName/{userName}")
+    public List<PhotoAlbum> findAllPhotoAlbenByUserName(@PathVariable("userName") String userName){
+        return photoAlbumService.findAllPhotoAlbenByUserName(userName);
     }
 
-    @RequestMapping(value = "/findPhotoAlbum", method = RequestMethod.GET)
-    public PhotoAlbum findPhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
-        return this.photoAlbumService.findPhotoAlbum(photoAlbum);
+    @RequestMapping(path = "/createPhotoAlbum", method = RequestMethod.GET)
+    public boolean createPhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
+        return this.photoAlbumService.createPhotoAlbum(photoAlbum);
     }
 
     @RequestMapping(path = "/updatePhotoAlbum", method = RequestMethod.GET)
@@ -45,53 +43,4 @@ public class PhotoAlbumController {
         return photoAlbumService.deletePhotoAlbum(photoAlbum);
     }
 
-    @RequestMapping(value = "/findAllPhotoAlben", method = RequestMethod.GET)
-    public List<PhotoAlbum> findAllPhotoAlben() {
-        return photoAlbumService.findAllPhotoAlben();
-    }
-
-    // Testing
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public PhotoAlbum create() {
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("Amerika");
-        if (!savePhotoAlbum(photoAlbum)) {
-            return null;
-        }
-        return photoAlbum;
-    }
-
-    @RequestMapping(value = "/find", method = RequestMethod.GET)
-    public String find() {
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("Amerika");
-
-        if (updatePhotoAlbum(photoAlbum) == null) {
-            return "Object doesn't found";
-        }
-        return "Object founded";
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String update() {
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("Amerika");
-
-        if (updatePhotoAlbum(photoAlbum) == null) {
-            return "Object is null, no updated";
-        }
-        return "Object exist's, UPDATED";
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String delete() {
-
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("Amerika");
-
-        if (!deletePhotoAlbum(photoAlbum)) {
-            return "Object is null, no deleted";
-        }
-        return "Object is deleted";
-    }
 }

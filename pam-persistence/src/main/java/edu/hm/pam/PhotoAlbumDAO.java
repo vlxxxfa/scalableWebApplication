@@ -9,13 +9,11 @@ import java.util.List;
  */
 public interface PhotoAlbumDAO {
 
-    boolean savePhotoAlbum(PhotoAlbum photoAlbum);
+    List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName);
 
-    PhotoAlbum findPhotoAlbum(PhotoAlbum photoAlbum);
+    boolean createPhotoAlbum(PhotoAlbum photoAlbum);
 
     PhotoAlbum updatePhotoAlbum(PhotoAlbum photoAlbum);
 
     boolean deletePhotoAlbum(PhotoAlbum photoAlbum);
-
-    List<PhotoAlbum> findAllPhotoAlben();
 }

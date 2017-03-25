@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface PhotoService {
 
+    List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle);
+
     boolean savePhoto(Photo photo);
 
     Photo findPhoto(Photo photo);

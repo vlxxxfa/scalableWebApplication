@@ -14,19 +14,7 @@ public class User {
 
     private String email;
 
-    private List<PhotoAlbum> photoAlben;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getPassWord() {
-        return passWord;
-    }
-
-    public String getEmail() {
-        return email;
-    }
+    private List<PhotoAlbum> photoAlbumList;
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -40,12 +28,25 @@ public class User {
         this.email = email;
     }
 
-    public List<PhotoAlbum> getPhotoAlben() {
-        return photoAlben;
+    public void setPhotoAlbumList(List<PhotoAlbum> photoAlbumList) {
+        this.photoAlbumList = photoAlbumList;
     }
 
-    public void setPhotoAlben(List<PhotoAlbum> photoAlben) {
-        this.photoAlben = photoAlben;
+    public String getUserName() {
+
+        return userName;
+    }
+
+    public String getPassWord() {
+        return passWord;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public List<PhotoAlbum> getPhotoAlbumList() {
+        return photoAlbumList;
     }
 
     @Override

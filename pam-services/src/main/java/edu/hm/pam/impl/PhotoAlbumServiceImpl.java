@@ -22,13 +22,13 @@ public class PhotoAlbumServiceImpl implements PhotoAlbumService {
     }
 
     @Override
-    public boolean savePhotoAlbum(PhotoAlbum photoAlbum) {
-        return this.photoAlbumDAO.savePhotoAlbum(photoAlbum);
+    public List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName){
+        return photoAlbumDAO.findAllPhotoAlbenByUserName(userName);
     }
 
     @Override
-    public PhotoAlbum findPhotoAlbum(PhotoAlbum photoAlbum) {
-        return photoAlbumDAO.findPhotoAlbum(photoAlbum);
+    public boolean createPhotoAlbum(PhotoAlbum photoAlbum) {
+        return this.photoAlbumDAO.createPhotoAlbum(photoAlbum);
     }
 
     @Override
@@ -40,10 +40,4 @@ public class PhotoAlbumServiceImpl implements PhotoAlbumService {
     public boolean deletePhotoAlbum(PhotoAlbum photoAlbum) {
         return photoAlbumDAO.deletePhotoAlbum(photoAlbum);
     }
-
-    @Override
-    public List<PhotoAlbum> findAllPhotoAlben() {
-        return photoAlbumDAO.findAllPhotoAlben();
-    }
-
 }

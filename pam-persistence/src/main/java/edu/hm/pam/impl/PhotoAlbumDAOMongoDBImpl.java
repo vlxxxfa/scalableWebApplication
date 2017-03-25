@@ -28,10 +28,32 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
     // // TODO: 22.03.17 to insert a MongoConnection in an exclude class
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
-    private MongoCollection<Document> collection = db.getCollection("photoAlben");
+    private MongoCollection<Document> collection = db.getCollection("users");
 
     @Override
-    public boolean savePhotoAlbum(PhotoAlbum photoAlbum) {
+    public List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName) {
+
+        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+
+        try {
+            Document foundUser = collection.find(new Document("_id", userName)).first();
+            List<Document> embeddedPhotoAlbenOfUser = (List<Document>) foundUser.get("photoAlbumList");
+
+            for (Document documentForPhotoAlbum : embeddedPhotoAlbenOfUser) {
+                String toJson = documentForPhotoAlbum.toJson();
+                PhotoAlbum photoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
+                System.out.println(photoAlbum.getAlbumTitle());
+                photoAlbumList.add(photoAlbum);
+            }
+        } catch (NullPointerException npe) {
+            logger.error(npe.getMessage(), npe);
+        }
+        return photoAlbumList;
+    }
+
+
+    @Override
+    public boolean createPhotoAlbum(PhotoAlbum photoAlbum) {
         boolean status;
         Gson gson = new Gson();
         String str_representation = gson.toJson(photoAlbum);
@@ -45,26 +67,6 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
             logger.error(mwe.getMessage(), mwe);
         }
         return status;
-    }
-
-    @Override
-    public PhotoAlbum findPhotoAlbum(PhotoAlbum photoAlbum) {
-
-        PhotoAlbum foundPhotoAlbum;
-
-        try {
-            Document document = collection.find(new Document("_id", photoAlbum.getAlbumTitle())).first();
-            String toJson = document.toJson();
-            foundPhotoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
-        } catch (NullPointerException npe) {
-            foundPhotoAlbum = null;
-            logger.error(npe.getMessage(), npe);
-        } catch (JsonSyntaxException jse) {
-            foundPhotoAlbum = null;
-            logger.error(jse.getMessage(), jse);
-
-        }
-        return foundPhotoAlbum;
     }
 
     @Override
@@ -104,28 +106,23 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         return status;
     }
 
-    @Override
-    public List<PhotoAlbum> findAllPhotoAlben() {
+    public PhotoAlbum findPhotoAlbum(PhotoAlbum photoAlbum) {
 
         PhotoAlbum foundPhotoAlbum;
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
 
         try {
-            List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
-
-            for (Document document : listOfFoundedDocuments) {
-                String toJson = document.toJson();
-                foundPhotoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
-                photoAlbumList.add(foundPhotoAlbum);
-            }
+            Document document = collection.find(new Document("_id", photoAlbum.getAlbumTitle())).first();
+            String toJson = document.toJson();
+            foundPhotoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
         } catch (NullPointerException npe) {
             foundPhotoAlbum = null;
             logger.error(npe.getMessage(), npe);
         } catch (JsonSyntaxException jse) {
             foundPhotoAlbum = null;
             logger.error(jse.getMessage(), jse);
+
         }
-        return photoAlbumList;
+        return foundPhotoAlbum;
     }
 
     public static void main(String[] args) {
@@ -146,13 +143,13 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
 
         PhotoAlbum photoAlbum = new PhotoAlbum();
         photoAlbum.setAlbumTitle("album");
-        photoAlbum.setListOfPhotos(photoList);
+        photoAlbum.setPhotoList(photoList);
 
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         photoAlbumList.add(photoAlbum);
 
         // photo.setPhotoAlben(photoAlbumList);
-        boolean status = photoAlbumDAOMongoDB.savePhotoAlbum(photoAlbum);
+        boolean status = photoAlbumDAOMongoDB.createPhotoAlbum(photoAlbum);
         // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
         // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
         // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);

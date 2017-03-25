@@ -2,16 +2,14 @@ package edu.hm.pam;
 
 import edu.hm.pam.entity.Photo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * Created by vlfa on 15.03.17.
  */
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/photo")
 public class PhotoController {
@@ -19,6 +17,12 @@ public class PhotoController {
     // static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
     private PhotoService photoService;
+
+    @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle/{userName}/{albumTitle}")
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable("userName") String userName,
+                                                          @PathVariable("albumTitle") String albumTitle) {
+        return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
+    }
 
     @Autowired
     public PhotoController(PhotoService photoService) {

@@ -7,6 +7,7 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.UserDAO;
+import edu.hm.pam.entity.Photo;
 import edu.hm.pam.entity.PhotoAlbum;
 import edu.hm.pam.entity.User;
 import org.bson.Document;
@@ -49,12 +50,12 @@ public class UserDAOMongoDBImpl implements UserDAO {
     }
 
     @Override
-    public User findUser(User user) {
+    public User findUserByUserName(String userName) {
 
         User foundUser;
 
         try {
-            Document document = collection.find(new Document("_id", user.getUserName())).first();
+            Document document = collection.find(new Document("_id", userName)).first();
             String toJson = document.toJson();
             foundUser = new Gson().fromJson(toJson, User.class);
         } catch (NullPointerException npe) {
@@ -63,7 +64,6 @@ public class UserDAOMongoDBImpl implements UserDAO {
         } catch (JsonSyntaxException jse) {
             foundUser = null;
             logger.error(jse.getMessage(), jse);
-
         }
         return foundUser;
     }
@@ -80,7 +80,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
             collection.findOneAndReplace(document, newDocument);
 
             String toJson = newDocument.toJson();
-            updatedUser = this.findUser(new Gson().fromJson(toJson, User.class));
+            updatedUser = this.findUserByUserName(toJson);
         } catch (NullPointerException npe) {
             updatedUser = null;
             logger.error(npe.getMessage(), npe);
@@ -94,7 +94,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
         boolean status;
 
         try {
-            if (findUser(user) != null) {
+            if (findUserByUserName(user.getUserName()) != null) {
                 collection.findOneAndDelete(new Document("_id", user.getUserName()));
                 status = true;
             } else {
@@ -138,19 +138,11 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
 
-        user.setUserName("new User");
-        user.setPassWord("new password");
-
-        // Photo photo1 = new Photo();
-        // photo1.setTitle("xxx");
-        // Photo photo2 = new Photo();
-        // photo2.setTitle("xxx");
-        // List<Photo> photoList = new ArrayList<>();
-        // photoList.add(photo1);
-        // photoList.add(photo2);
+        user.setUserName("Ortlieb");
+        user.setPassWord("password");
 
         PhotoAlbum photoAlbum1 = new PhotoAlbum();
-        photoAlbum1.setAlbumTitle("new Album1");
+        photoAlbum1.setAlbumTitle("album1");
         PhotoAlbum photoAlbum2 = new PhotoAlbum();
         photoAlbum2.setAlbumTitle("new Album2");
         PhotoAlbum photoAlbum3 = new PhotoAlbum();
@@ -164,8 +156,6 @@ public class UserDAOMongoDBImpl implements UserDAO {
         PhotoAlbum photoAlbum7 = new PhotoAlbum();
         photoAlbum7.setAlbumTitle("new Album7");
 
-        // photoAlbum.setListOfPhotos(photoList);
-
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         photoAlbumList.add(photoAlbum1);
         photoAlbumList.add(photoAlbum2);
@@ -175,83 +165,34 @@ public class UserDAOMongoDBImpl implements UserDAO {
         photoAlbumList.add(photoAlbum6);
         photoAlbumList.add(photoAlbum7);
 
-        user.setPhotoAlben(photoAlbumList);
+        user.setPhotoAlbumList(photoAlbumList);
+
+        Photo photo1 = new Photo();
+        photo1.setTitle("photo1");
+        Photo photo2 = new Photo();
+        photo2.setTitle("photo1");
+        Photo photo3 = new Photo();
+        photo3.setTitle("photo1");
+        Photo photo4 = new Photo();
+        photo4.setTitle("photo1");
+        Photo photo5 = new Photo();
+        photo5.setTitle("photo1");
+
+        List<Photo> photoList = new ArrayList<>();
+        photoList.add(photo1);
+        photoList.add(photo2);
+        photoList.add(photo3);
+        photoList.add(photo4);
+        photoList.add(photo5);
+
+        photoAlbum1.setPhotoList(photoList);
 
         // userDAOMongoDB.findAllPhotoAlbenByUserId(user);
         userDAOMongoDB.createUser(user);
-        // boolean status = userDAOMongoDB.deleteUser(user);
+        // userDAOMongoDB.deleteUser(user);
         // User status = userDAOMongoDB.findUser(user);
         // User status = userDAOMongoDB.updateUser(user);
         // userDAOMongoDB.findAllUsers();
-
-        // System.out.println(status);
+        System.out.println(userDAOMongoDB.findUserByUserName("Faerman"));
     }
-
-    //
-    // @Override
-    // public User logIn(User user) {
-    //     return null;
-    // }
-    //
-    // @Override
-    // public User logOut(User user) {
-    //     return null;
-    // }
-
-    // String db = new String("test");
-    // MongoClient mongoClient = new MongoClient();
-    // Morphia morphia = new Morphia();
-    // Datastore datastore = morphia.createDatastore(mongoClient, db);
-    //
-    // public void createUser(User user) {
-    //     try {
-    //         datastore.save(new User(user.getUserName(), user.getPassWord(), user.getEmail()));
-    //     } catch (MongoClientException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-    //
-    // public Query<User> findUser(User user) {
-    //     return datastore.createQuery(User.class).field("_id").equal(user.getId());
-    // }
-    //
-    // public Query<User> updateUser(User user) {
-    //     Query<User> updateQuery = datastore.createQuery(User.class).field("_id").equal(user.getId());
-    //     UpdateOperations<User> ops = datastore.createUpdateOperations(User.class)
-    //             .set("userName", user.getUserName())
-    //             .set("passWord", user.getPassWord())
-    //             .set("email", user.getEmail());
-    //     datastore.update(updateQuery, ops);
-    //     return findUser(user);
-    // }
-    //
-    // public void deleteUser(User user) {
-    // }
-    //
-    // public User logIn(User user) {
-    //     return null;
-    // }
-    //
-    // public User logOut(User user) {
-    //     return null;
-    // }
-
-
-    // public static void main(String[] args){
-    //
-    //     String dbName = new String("test");
-    //     MongoClient mongo = new MongoClient();
-    //     Morphia morphia = new Morphia();
-    //     Datastore datastore = morphia.createDatastore(mongo, dbName);
-    //
-    //     // morphia.mapPackage("edu.hm.vlfa.pam.entity");
-    //
-    //     User user = new User("admin", "admin");
-    //
-    //     Key<User> saveUser = datastore.save(user);
-    //     System.out.println(saveUser.getId());
-    //
-    //     // Key<User> readuser = datastore.getKey()
-    // }
-
 }
