@@ -9,9 +9,9 @@ import java.util.List;
  */
 public interface PhotoAlbumDAO {
 
-    List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName);
+    boolean createPhotoAlbumByUserName(String userName, PhotoAlbum photoAlbum);
 
-    boolean createPhotoAlbum(PhotoAlbum photoAlbum);
+    List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName);
 
     PhotoAlbum updatePhotoAlbum(PhotoAlbum photoAlbum);
 

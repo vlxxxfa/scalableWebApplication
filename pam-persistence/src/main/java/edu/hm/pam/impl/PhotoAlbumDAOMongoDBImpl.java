@@ -3,6 +3,7 @@ package edu.hm.pam.impl;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.PhotoAlbumDAO;
@@ -33,6 +34,28 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
     private MongoCollection<Document> collection = db.getCollection("users");
 
     @Override
+    public boolean createPhotoAlbumByUserName(String userName, PhotoAlbum photoAlbum) {
+
+        boolean status;
+
+        Gson gson = new Gson();
+        String str_representation = gson.toJson(photoAlbum);
+        Document doc = Document.parse(str_representation);
+
+        // $push add a new Document by updateOne-method
+        try {
+            collection.updateOne(eq("_id", userName), new Document("$push",
+                    new Document("photoAlbumList", Arrays.asList(doc)
+                    ).append("photoAlbumList", doc)));
+            status = true;
+        } catch (MongoWriteException mwe) {
+            logger.error(mwe.getMessage(), mwe);
+            status = false;
+        }
+        return status;
+    }
+
+    @Override
     public List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName) {
 
         List<PhotoAlbum> photoAlbumList = new ArrayList<>();
@@ -51,11 +74,6 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
             logger.error(npe.getMessage(), npe);
         }
         return photoAlbumList;
-    }
-
-    @Override
-    public boolean createPhotoAlbum(PhotoAlbum photoAlbum) {
-        return false;
     }
 
     @Override
@@ -114,50 +132,6 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         return foundPhotoAlbum;
     }
 
-    // @Override
-    public boolean createPhotoAlbumByUserName(String userName, PhotoAlbum photoAlbum) {
-        boolean status = false;
-        // boolean foundPhotoAlbumByUser = false;
-        // Document foundUser;
-
-        Gson gson = new Gson();
-        String str_representation = gson.toJson(photoAlbum);
-        Document doc = Document.parse(str_representation);
-
-        // try {
-        // foundUser = collection.find(eq("_id", userName)).first();
-        // List<Document> embeddedPhotoAlbenOfUser = (List<Document>) foundUser.get("photoAlbumList");
-        // for (Document embeddedPhotoAlben : embeddedPhotoAlbenOfUser) {
-        //
-        //     String toJson = embeddedPhotoAlben.toJson();
-        //     PhotoAlbum photoAlbumFromCollectionByUserName = new Gson().fromJson(toJson, PhotoAlbum.class);
-        //
-        //     if (photoAlbumFromCollectionByUserName.equals(photoAlbum)) {
-        //         foundPhotoAlbumByUser = true;
-        //         break;
-        //     } else {
-        //         foundPhotoAlbumByUser = false;
-        //     }
-        // }
-        // if (foundPhotoAlbumByUser == false) {
-
-
-
-        // $pull: added to the existed document
-        // $set: delete and add a new document
-        collection.updateOne(eq("_id", userName), new Document("$push",
-                new Document("photoAlbumList", Arrays.asList(doc)
-                ).append("photoAlbumList", doc)));
-        status = true;
-        // }
-        // } catch (MongoWriteException mwe) {
-        //     status = false;
-        //     logger.error(mwe.getMessage(), mwe);
-        // }
-        return status;
-    }
-
-
     public static void main(String[] args) {
 
         PhotoAlbumDAOMongoDBImpl photoAlbumDAOMongoDB = new PhotoAlbumDAOMongoDBImpl();
@@ -182,7 +156,7 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         // photoAlbumList.add(photoAlbum);
 
         // photo.setPhotoAlben(photoAlbumList);
-        boolean status = photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Puniegova", photoAlbum);
+        boolean status = photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbum);
         // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
         // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
         // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);

@@ -22,13 +22,13 @@ public class PhotoAlbumServiceImpl implements PhotoAlbumService {
     }
 
     @Override
-    public List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName){
-        return photoAlbumDAO.findAllPhotoAlbenByUserName(userName);
+    public boolean createPhotoAlbumByUserName(String userName, PhotoAlbum photoAlbum){
+        return photoAlbumDAO.createPhotoAlbumByUserName(userName, photoAlbum);
     }
 
     @Override
-    public boolean createPhotoAlbum(PhotoAlbum photoAlbum) {
-        return this.photoAlbumDAO.createPhotoAlbum(photoAlbum);
+    public List<PhotoAlbum> findAllPhotoAlbenByUserName(String userName){
+        return photoAlbumDAO.findAllPhotoAlbenByUserName(userName);
     }
 
     @Override

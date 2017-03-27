@@ -11,7 +11,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/photoAlbum")
+@RequestMapping(value = "/{userName}/photoAlben/")
 public class PhotoAlbumController {
 
     // static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
@@ -23,22 +23,22 @@ public class PhotoAlbumController {
         this.photoAlbumService = photoAlbumService;
     }
 
-    @RequestMapping(path = "findAllPhotoAlbenByUserName/{userName}")
+    @RequestMapping(value = "createPhotoAlbumByUserName")
+    public boolean createPhotoAlbumByUserName(String userName, @RequestBody PhotoAlbum photoAlbum){
+        return photoAlbumService.createPhotoAlbumByUserName(userName, photoAlbum);
+    }
+
+    @RequestMapping(path = "findAllPhotoAlbenByUserName")
     public List<PhotoAlbum> findAllPhotoAlbenByUserName(@PathVariable("userName") String userName){
         return photoAlbumService.findAllPhotoAlbenByUserName(userName);
     }
 
-    @RequestMapping(path = "/createPhotoAlbum", method = RequestMethod.GET)
-    public boolean createPhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
-        return this.photoAlbumService.createPhotoAlbum(photoAlbum);
-    }
-
-    @RequestMapping(path = "/updatePhotoAlbum", method = RequestMethod.GET)
+    @RequestMapping(path = "updatePhotoAlbum", method = RequestMethod.GET)
     public PhotoAlbum updatePhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
         return photoAlbumService.updatePhotoAlbum(photoAlbum);
     }
 
-    @RequestMapping(value = "/deletePhotoAlbum", method = RequestMethod.GET)
+    @RequestMapping(value = "deletePhotoAlbum", method = RequestMethod.GET)
     public boolean deletePhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
         return photoAlbumService.deletePhotoAlbum(photoAlbum);
     }
