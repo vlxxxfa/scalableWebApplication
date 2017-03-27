@@ -32,7 +32,7 @@ public class UserDAOMySQLDBImpl implements UserDAO {
     }
 
     @Override
-    public boolean deleteUser(User user) {
+    public boolean deleteUser(String userName) {
         return false;
     }
 

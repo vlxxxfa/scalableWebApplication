@@ -11,7 +11,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/{userName}/users/")
 public class UserController {
 
     // final static Logger LOGGER = Logger.getLogger( UserController.class.getName() );
@@ -23,28 +23,27 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "/createUser", method = RequestMethod.GET)
+    @RequestMapping(path = "createUser", method = RequestMethod.GET)
     public boolean createUser(@RequestBody User user) {
         return this.userService.createUser(user);
     }
 
-    @RequestMapping(value = "/findUserByUserName/{userName}", method = RequestMethod.GET)
+    @RequestMapping(value = "findUserByUserName", method = RequestMethod.GET)
     public User findUserByUserName(@PathVariable(value = "userName") String userName) {
-        System.out.println("testController");
         return this.userService.findUserByUserName(userName);
     }
 
-    @RequestMapping(path = "/updateUser", method = RequestMethod.GET)
+    @RequestMapping(path = "updateUser", method = RequestMethod.GET)
     public User updateUser(@RequestBody User user) {
         return userService.updateUser(user);
     }
 
-    @RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
-    public boolean deleteUser(@RequestBody User user) {
-        return userService.deleteUser(user);
+    @RequestMapping(value = "deleteUser", method = RequestMethod.GET)
+    public boolean deleteUser(@PathVariable(value = "userName") String userName) {
+        return userService.deleteUser(userName);
     }
 
-    @RequestMapping(value = "/findAllUsers", method = RequestMethod.GET)
+    @RequestMapping(value = "findAllUsers", method = RequestMethod.GET)
     public List<User> findAllUsers(){
         return userService.findAllUsers();
     }

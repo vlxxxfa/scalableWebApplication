@@ -7,8 +7,6 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.UserDAO;
-import edu.hm.pam.entity.Photo;
-import edu.hm.pam.entity.PhotoAlbum;
 import edu.hm.pam.entity.User;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -17,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Created by vlfa on 15.03.17.
@@ -55,7 +55,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
         User foundUser;
 
         try {
-            Document document = collection.find(new Document("_id", userName)).first();
+            Document document = collection.find(eq("_id", userName)).first();
             String toJson = document.toJson();
             foundUser = new Gson().fromJson(toJson, User.class);
         } catch (NullPointerException npe) {
@@ -89,6 +89,11 @@ public class UserDAOMongoDBImpl implements UserDAO {
     }
 
     @Override
+    public boolean deleteUser(String userName) {
+        return false;
+    }
+
+    // @Override
     public boolean deleteUser(User user) {
 
         boolean status;
@@ -138,58 +143,12 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
 
-        user.setUserName("Ortlieb");
+        user.setUserName("test");
         user.setPassWord("password");
 
-        PhotoAlbum photoAlbum1 = new PhotoAlbum();
-        photoAlbum1.setAlbumTitle("album1");
-        PhotoAlbum photoAlbum2 = new PhotoAlbum();
-        photoAlbum2.setAlbumTitle("new Album2");
-        PhotoAlbum photoAlbum3 = new PhotoAlbum();
-        photoAlbum3.setAlbumTitle("new Album3");
-        PhotoAlbum photoAlbum4 = new PhotoAlbum();
-        photoAlbum4.setAlbumTitle("new Album4");
-        PhotoAlbum photoAlbum5 = new PhotoAlbum();
-        photoAlbum5.setAlbumTitle("new Album5");
-        PhotoAlbum photoAlbum6 = new PhotoAlbum();
-        photoAlbum6.setAlbumTitle("new Album6");
-        PhotoAlbum photoAlbum7 = new PhotoAlbum();
-        photoAlbum7.setAlbumTitle("new Album7");
-
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        photoAlbumList.add(photoAlbum1);
-        photoAlbumList.add(photoAlbum2);
-        photoAlbumList.add(photoAlbum3);
-        photoAlbumList.add(photoAlbum4);
-        photoAlbumList.add(photoAlbum5);
-        photoAlbumList.add(photoAlbum6);
-        photoAlbumList.add(photoAlbum7);
-
-        user.setPhotoAlbumList(photoAlbumList);
-
-        Photo photo1 = new Photo();
-        photo1.setTitle("photo1");
-        Photo photo2 = new Photo();
-        photo2.setTitle("photo1");
-        Photo photo3 = new Photo();
-        photo3.setTitle("photo1");
-        Photo photo4 = new Photo();
-        photo4.setTitle("photo1");
-        Photo photo5 = new Photo();
-        photo5.setTitle("photo1");
-
-        List<Photo> photoList = new ArrayList<>();
-        photoList.add(photo1);
-        photoList.add(photo2);
-        photoList.add(photo3);
-        photoList.add(photo4);
-        photoList.add(photo5);
-
-        photoAlbum1.setPhotoList(photoList);
-
         // userDAOMongoDB.findAllPhotoAlbenByUserId(user);
-        userDAOMongoDB.createUser(user);
-        // userDAOMongoDB.deleteUser(user);
+        // userDAOMongoDB.createUser(user);
+        userDAOMongoDB.deleteUser(user);
         // User status = userDAOMongoDB.findUser(user);
         // User status = userDAOMongoDB.updateUser(user);
         // userDAOMongoDB.findAllUsers();

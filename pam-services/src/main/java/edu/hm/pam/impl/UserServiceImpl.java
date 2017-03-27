@@ -28,8 +28,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByUserName(String userName) {
-        System.out.println("testService");
-
         return userDAO.findUserByUserName(userName);
     }
 
@@ -39,8 +37,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(User user) {
-        return userDAO.deleteUser(user);
+    public boolean deleteUser(String userName) {
+        return userDAO.deleteUser(userName);
     }
 
     @Override
