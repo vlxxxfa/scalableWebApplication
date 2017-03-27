@@ -35,13 +35,20 @@ public class UserDAOMongoDBImpl implements UserDAO {
     public boolean createUser(User user) {
 
         boolean status;
+
         Gson gson = new Gson();
         String str_representation = gson.toJson(user);
 
         try {
-            Document doc = Document.parse(str_representation).append("_id", user.getUserName());
-            collection.insertOne(doc);
-            status = true;
+            Document foundUser = collection.find(eq("_id", user.getUserName())).first();
+            if (foundUser == null) {
+                collection.insertOne(Document.parse(str_representation).append("_id", user.getUserName()));
+                System.out.println("User doesn't exist -> Inserted");
+                status = true;
+            } else {
+                status = false;
+                System.out.println("User exist's already -> Not inserted'");
+            }
         } catch (MongoWriteException mwe) {
             status = false;
             logger.error(mwe.getMessage(), mwe);
