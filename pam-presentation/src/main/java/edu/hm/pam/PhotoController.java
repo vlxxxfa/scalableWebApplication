@@ -11,7 +11,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/photo")
+@RequestMapping(value = "/{userName}/{albumTitle}/photos")
 public class PhotoController {
 
     // static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
