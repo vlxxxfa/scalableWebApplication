@@ -143,12 +143,12 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
 
-        user.setUserName("test");
+        user.setUserName("Faerman");
         user.setPassWord("password");
 
         // userDAOMongoDB.findAllPhotoAlbenByUserId(user);
-        // userDAOMongoDB.createUser(user);
-        userDAOMongoDB.deleteUser(user);
+        userDAOMongoDB.createUser(user);
+        // userDAOMongoDB.deleteUser(user);
         // User status = userDAOMongoDB.findUser(user);
         // User status = userDAOMongoDB.updateUser(user);
         // userDAOMongoDB.findAllUsers();
