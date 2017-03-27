@@ -7,21 +7,29 @@ package edu.hm.pam.entity;
 public class Photo {
 
     private String title;
-    private PhotoAlbum photoAlbum;
 
     public String getTitle() {
         return title;
-    }
-
-    public PhotoAlbum getPhotoAlbum() {
-        return photoAlbum;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setPhotoAlbum(PhotoAlbum photoAlbum) {
-        this.photoAlbum = photoAlbum;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Photo photo = (Photo) o;
+        if (!this.title.equals(photo.getTitle())) {
+            return false;
+        }
+        return title.equals(photo.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return title.hashCode();
     }
 }

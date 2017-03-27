@@ -12,8 +12,6 @@ public class PhotoAlbum {
 
     private List<Photo> photoList;
 
-    private User user;
-
     public String getAlbumTitle() {
         return albumTitle;
     }
@@ -31,11 +29,20 @@ public class PhotoAlbum {
         this.photoList = photoList;
     }
 
-    public User getUser() {
-        return user;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PhotoAlbum that = (PhotoAlbum) o;
+        if(!this.albumTitle.equals(that.getAlbumTitle())){
+            return false;
+        }
+        return albumTitle.equals(that.albumTitle);
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    @Override
+    public int hashCode() {
+        return albumTitle.hashCode();
     }
 }
