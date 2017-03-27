@@ -3,7 +3,6 @@ package edu.hm.pam.impl;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.PhotoAlbumDAO;
@@ -15,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Created by vlfa on 16.03.17.
@@ -51,22 +53,9 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         return photoAlbumList;
     }
 
-
     @Override
     public boolean createPhotoAlbum(PhotoAlbum photoAlbum) {
-        boolean status;
-        Gson gson = new Gson();
-        String str_representation = gson.toJson(photoAlbum);
-
-        try {
-            Document doc = Document.parse(str_representation).append("_id", photoAlbum.getAlbumTitle());
-            collection.insertOne(doc);
-            status = true;
-        } catch (MongoWriteException mwe) {
-            status = false;
-            logger.error(mwe.getMessage(), mwe);
-        }
-        return status;
+        return false;
     }
 
     @Override
@@ -125,31 +114,75 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         return foundPhotoAlbum;
     }
 
+    // @Override
+    public boolean createPhotoAlbumByUserName(String userName, PhotoAlbum photoAlbum) {
+        boolean status = false;
+        // boolean foundPhotoAlbumByUser = false;
+        // Document foundUser;
+
+        Gson gson = new Gson();
+        String str_representation = gson.toJson(photoAlbum);
+        Document doc = Document.parse(str_representation);
+
+        // try {
+        // foundUser = collection.find(eq("_id", userName)).first();
+        // List<Document> embeddedPhotoAlbenOfUser = (List<Document>) foundUser.get("photoAlbumList");
+        // for (Document embeddedPhotoAlben : embeddedPhotoAlbenOfUser) {
+        //
+        //     String toJson = embeddedPhotoAlben.toJson();
+        //     PhotoAlbum photoAlbumFromCollectionByUserName = new Gson().fromJson(toJson, PhotoAlbum.class);
+        //
+        //     if (photoAlbumFromCollectionByUserName.equals(photoAlbum)) {
+        //         foundPhotoAlbumByUser = true;
+        //         break;
+        //     } else {
+        //         foundPhotoAlbumByUser = false;
+        //     }
+        // }
+        // if (foundPhotoAlbumByUser == false) {
+
+
+
+        // $pull: added to the existed document
+        // $set: delete and add a new document
+        collection.updateOne(eq("_id", userName), new Document("$push",
+                new Document("photoAlbumList", Arrays.asList(doc)
+                ).append("photoAlbumList", doc)));
+        status = true;
+        // }
+        // } catch (MongoWriteException mwe) {
+        //     status = false;
+        //     logger.error(mwe.getMessage(), mwe);
+        // }
+        return status;
+    }
+
+
     public static void main(String[] args) {
 
-        PhotoAlbumDAO photoAlbumDAOMongoDB = new PhotoAlbumDAOMongoDBImpl();
+        PhotoAlbumDAOMongoDBImpl photoAlbumDAOMongoDB = new PhotoAlbumDAOMongoDBImpl();
 
-        Photo photo = new Photo();
-        photo.setTitle("London");
-        Photo photo1 = new Photo();
-        photo1.setTitle("Bayern");
-        Photo photo2 = new Photo();
-        photo2.setTitle("Paris");
+        // Photo photo = new Photo();
+        // photo.setTitle("London");
+        // Photo photo1 = new Photo();
+        // photo1.setTitle("Bayern");
+        // Photo photo2 = new Photo();
+        // photo2.setTitle("Paris");
 
         List<Photo> photoList = new ArrayList<>();
-        photoList.add(photo);
-        photoList.add(photo1);
-        photoList.add(photo2);
+        // photoList.add(photo);
+        // photoList.add(photo1);
+        // photoList.add(photo2);
 
         PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("album");
+        photoAlbum.setAlbumTitle("test");
         photoAlbum.setPhotoList(photoList);
 
-        List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        photoAlbumList.add(photoAlbum);
+        // List<PhotoAlbum> photoAlbumList = new ArrayList<>();
+        // photoAlbumList.add(photoAlbum);
 
         // photo.setPhotoAlben(photoAlbumList);
-        boolean status = photoAlbumDAOMongoDB.createPhotoAlbum(photoAlbum);
+        boolean status = photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Puniegova", photoAlbum);
         // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
         // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
         // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);
