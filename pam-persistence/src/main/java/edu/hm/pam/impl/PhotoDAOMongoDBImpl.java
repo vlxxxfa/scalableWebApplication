@@ -103,23 +103,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     }
 
     @Override
-    public boolean savePhoto(Photo photo) {
-        boolean status;
-        Gson gson = new Gson();
-        String str_representation = gson.toJson(photo);
-
-        try {
-            Document doc = Document.parse(str_representation).append("_id", photo.getTitle());
-            collection.insertOne(doc);
-            status = true;
-        } catch (MongoWriteException mwe) {
-            status = false;
-            logger.error(mwe.getMessage(), mwe);
-        }
-        return status;
-    }
-
-    @Override
     public Photo findPhoto(Photo photo) {
         Photo foundPhoto;
 

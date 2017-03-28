@@ -18,20 +18,21 @@ public class PhotoController {
 
     private PhotoService photoService;
 
-    @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle/{userName}/{albumTitle}")
-    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable("userName") String userName,
-                                                          @PathVariable("albumTitle") String albumTitle) {
-        return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
-    }
-
     @Autowired
     public PhotoController(PhotoService photoService) {
         this.photoService = photoService;
     }
 
-    @RequestMapping(path = "/savePhoto", method = RequestMethod.GET)
-    public boolean savePhoto(@RequestBody Photo photo) {
-        return this.photoService.savePhoto(photo);
+    @RequestMapping(path = "/createPhotoByAlbumTitleOfUser", method = RequestMethod.GET)
+    public boolean createPhotoByAlbumTitleOfUser(
+            @PathVariable String userName, @PathVariable String albumTitle, @RequestBody Photo photo) {
+        return this.photoService.createPhotoByAlbumTitleOfUser(userName, albumTitle, photo);
+    }
+
+    @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle")
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable String userName,
+                                                                 @PathVariable String albumTitle) {
+        return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
     }
 
     @RequestMapping(value = "/findPhoto", method = RequestMethod.GET)
@@ -52,51 +53,5 @@ public class PhotoController {
     @RequestMapping(value = "/findAllPhotos", method = RequestMethod.GET)
     public List<Photo> findAllPhotos() {
         return photoService.findAllPhotos();
-    }
-
-
-    // Testing
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public Photo create() {
-        Photo photo = new Photo();
-        photo.setTitle("Amerika");
-        if (!savePhoto(photo)) {
-            return null;
-        }
-        return photo;
-    }
-
-    @RequestMapping(value = "/find", method = RequestMethod.GET)
-    public String find() {
-        Photo photo = new Photo();
-        photo.setTitle("Amerika");
-
-        if (updatePhoto(photo) == null) {
-            return "Object doesn't found";
-        }
-        return "Object founded";
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String update() {
-        Photo photo = new Photo();
-        photo.setTitle("Amerika");
-
-        if (updatePhoto(photo) == null) {
-            return "Object is null, no updated";
-        }
-        return "Object exist's, UPDATED";
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String delete() {
-
-        Photo photo = new Photo();
-        photo.setTitle("Amerika");
-
-        if (!deletePhoto(photo)) {
-            return "Object is null, no deleted";
-        }
-        return "Object is deleted";
     }
 }

@@ -16,10 +16,6 @@ public class PhotoServiceImpl implements PhotoService {
 
     private PhotoDAO photoDAO;
 
-    @Override
-    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle){
-        return photoDAO.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
-    }
 
     @Autowired
     public PhotoServiceImpl(PhotoDAO photoDAO) {
@@ -27,8 +23,13 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public boolean savePhoto(Photo photo) {
-        return this.photoDAO.savePhoto(photo);
+    public boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo){
+        return photoDAO.createPhotoByAlbumTitleOfUser(userName, albumTitle, photo);
+    }
+
+    @Override
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle){
+        return photoDAO.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
     }
 
     @Override

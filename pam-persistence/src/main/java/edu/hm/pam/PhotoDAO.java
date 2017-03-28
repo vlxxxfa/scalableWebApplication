@@ -11,7 +11,7 @@ public interface PhotoDAO {
 
     List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle);
 
-    boolean savePhoto(Photo photo);
+    boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo);
 
     Photo findPhoto(Photo photo);
 
