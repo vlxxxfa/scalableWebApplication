@@ -7,7 +7,6 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.PhotoAlbumDAO;
-import edu.hm.pam.entity.Photo;
 import edu.hm.pam.entity.PhotoAlbum;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -15,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -42,12 +41,17 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         String str_representation = gson.toJson(photoAlbum);
         Document doc = Document.parse(str_representation);
 
-        // $push add a new Document by updateOne-method
+        Document addNewPhotoAlbumToUser = new Document("$push", new Document("photoAlbumList", doc));
+
         try {
-            collection.updateOne(eq("_id", userName), new Document("$push",
-                    new Document("photoAlbumList", Arrays.asList(doc)
-                    ).append("photoAlbumList", doc)));
-            status = true;
+            Document foundUserWithSamePhotoAlbum = collection.find(and(eq("_id", userName), eq("photoAlbumList.albumTitle", photoAlbum.getAlbumTitle()))).first();
+            if (foundUserWithSamePhotoAlbum == null) {
+                collection.updateOne(eq("_id", userName),
+                        addNewPhotoAlbumToUser);
+                status = true;
+            } else {
+                status = false;
+            }
         } catch (MongoWriteException mwe) {
             logger.error(mwe.getMessage(), mwe);
             status = false;
@@ -67,7 +71,7 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
             for (Document documentForPhotoAlbum : embeddedPhotoAlbenOfUser) {
                 String toJson = documentForPhotoAlbum.toJson();
                 PhotoAlbum photoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
-                System.out.println(photoAlbum.getAlbumTitle());
+                // System.out.println(photoAlbum.getAlbumTitle());
                 photoAlbumList.add(photoAlbum);
             }
         } catch (NullPointerException npe) {
@@ -143,24 +147,27 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         // Photo photo2 = new Photo();
         // photo2.setTitle("Paris");
 
-        List<Photo> photoList = new ArrayList<>();
-        // photoList.add(photo);
-        // photoList.add(photo1);
-        // photoList.add(photo2);
-
         PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("test");
-        photoAlbum.setPhotoList(photoList);
+        photoAlbum.setAlbumTitle("album");
+
+        PhotoAlbum photoAlbumSecond = new PhotoAlbum();
+        photoAlbumSecond.setAlbumTitle("albumSecond2");
 
         // List<PhotoAlbum> photoAlbumList = new ArrayList<>();
         // photoAlbumList.add(photoAlbum);
 
         // photo.setPhotoAlben(photoAlbumList);
-        boolean status = photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbum);
+        // photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Ortlieb", photoAlbum);
+        // photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbumSecond);
+        // photoAlbumDAOMongoDB.testCreatePhotoAlbum("Faerman", photoAlbum);
+        photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbumSecond);
         // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
         // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
         // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);
-
-        System.out.println(status);
+        // List<PhotoAlbum> allPhotoAlbenByUserName = photoAlbumDAOMongoDB.findAllPhotoAlbenByUserName("Faerman");
+        // for (PhotoAlbum photoAlbum1 : allPhotoAlbenByUserName) {
+        //     System.out.println(photoAlbum1.toString());
+        //
+        // }
     }
 }
