@@ -9,7 +9,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.PhotoDAO;
 import edu.hm.pam.entity.Photo;
-import edu.hm.pam.entity.PhotoAlbum;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,29 +33,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");
 
-
-    // String userName wird nicht nötig, da FotoAlbum eindeutig ist und nach albumTitle abzuspeichern, reicht
-    /*
-        1. If album exists
-            1.1. If photo list exists:
-                append new photo to photo list
-            1.2. If no photo list:
-                create photo list
-                append new photo to it
-         2. If no album exists:
-            do nothing
-     */
-
-
-    public PhotoAlbum getPhotoAlbum(String userName, String albumTitle) {
-
-        Object user = collection.find(and(eq("_id", userName),
-                eq("photoAlbumList.albumTitle", albumTitle))).first().getOrDefault("photoAlbumList.albumTitle", albumTitle);
-        System.out.println(user.toString());
-        return null;
-    }
-
-
     public boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) {
         boolean status = false;
 
@@ -74,29 +50,24 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         BasicDBObject command = new BasicDBObject();
         command.put("$push", data);
 
-        collection.updateOne(query, command);
-
-        // Document addNewPhotoToPhotoAlbumByUser = new Document("$push", new Document("photoList", doc));
-        //
-        // try {
-        //     Document user = collection.find(and(eq("_id", userName),
-        //             eq("photoAlbumList.albumTitle", albumTitle))).first();
-        //     // System.out.println(user.toJson());
-        //
-        //     if (user != null) {
-        //
-        //         collection.updateOne(user, addNewPhotoToPhotoAlbumByUser);
-        //
-        //         status = true;
-        //         System.out.println("PhotoAlbum exist's -> Photo inserted");
-        //     } else {
-        //         System.out.println("PhotoAlbum didn't exist -> Photo didn't insert");
-        //         status = false;
-        //     }
-        // } catch (MongoWriteException mwe) {
-        //     logger.error(mwe.getMessage(), mwe);
-        //     status = false;
-        // }
+        try {
+            Document foundPhotoInPhotoAlbumByUser = collection.find(
+                    and(
+                            eq("_id", userName),
+                            eq("photoAlbumList.albumTitle", albumTitle),
+                            eq("photoAlbumList.photoList.title", photo.getTitle()))).first();
+            if (foundPhotoInPhotoAlbumByUser == null){
+                collection.updateOne(query, command);
+                status = true;
+                System.out.println("Photo didn't' exist -> Photo inserted");
+            } else {
+                System.out.println("Photo exist's' -> Photo didn't insert");
+                status = false;
+            }
+        } catch (MongoWriteException mwe) {
+            logger.error(mwe.getMessage(), mwe);
+            status = false;
+        }
         return status;
     }
 
@@ -234,7 +205,7 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         PhotoDAOMongoDBImpl photoDAOMongoDB = new PhotoDAOMongoDBImpl();
 
         Photo photo = new Photo();
-        photo.setTitle("photo");
+        photo.setTitle("photo2");
 
 
         // photo.setPhotoAlben(photoAlbumList);
@@ -243,7 +214,8 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         // Photo status = photoDAOMongoDB.findPhoto(photo);
         // Photo status = photoDAOMongoDB.updatePhoto(photo);
         // System.out.print(photoDAOMongoDB.findAllPhotos());
-        System.out.println(photoDAOMongoDB.createPhotoByAlbumTitleOfUser("Faerman", "albumSecond2", photo));
+        System.out.println(photoDAOMongoDB.createPhotoByAlbumTitleOfUser("test", "albumSecond2", photo));
+        // System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("test", "album"));
         // photoDAOMongoDB.getPhotoAlbum("Faerman", "album");
 
         // System.out.println(status);

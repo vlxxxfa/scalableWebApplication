@@ -41,14 +41,13 @@ public class UserDAOMongoDBImpl implements UserDAO {
         Document doc = Document.parse(str_representation);
 
         try {
-            Document foundUser = collection.find(eq("_id", user.getUserName())).first();
+            Document foundUser = collection.find(
+                    eq("_id", user.getUserName())).first();
             if (foundUser == null) {
                 collection.insertOne(doc.append("_id", user.getUserName()));
-                System.out.println("User didn't exist -> Inserted");
                 status = true;
             } else {
                 status = false;
-                System.out.println("User exist's already -> Not inserted'");
             }
         } catch (MongoWriteException mwe) {
             status = false;
@@ -151,8 +150,8 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
 
-        user.setUserName("Ortlieb");
-        user.setPassWord("password");
+        user.setUserName("test");
+        user.setPassWord("test");
 
         // userDAOMongoDB.findAllPhotoAlbenByUserId(user);
         userDAOMongoDB.createUser(user);

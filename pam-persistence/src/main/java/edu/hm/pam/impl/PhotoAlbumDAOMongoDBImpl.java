@@ -44,7 +44,10 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         Document addNewPhotoAlbumToUser = new Document("$push", new Document("photoAlbumList", doc));
 
         try {
-            Document foundUserWithSamePhotoAlbum = collection.find(and(eq("_id", userName), eq("photoAlbumList.albumTitle", photoAlbum.getAlbumTitle()))).first();
+            Document foundUserWithSamePhotoAlbum = collection.find(
+                    and(
+                            eq("_id", userName),
+                            eq("photoAlbumList.albumTitle", photoAlbum.getAlbumTitle()))).first();
             if (foundUserWithSamePhotoAlbum == null) {
                 collection.updateOne(eq("_id", userName),
                         addNewPhotoAlbumToUser);
@@ -160,7 +163,7 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         // photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Ortlieb", photoAlbum);
         // photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbumSecond);
         // photoAlbumDAOMongoDB.testCreatePhotoAlbum("Faerman", photoAlbum);
-        photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbumSecond);
+        photoAlbumDAOMongoDB.createPhotoAlbumByUserName("test", photoAlbumSecond);
         // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
         // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
         // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);
