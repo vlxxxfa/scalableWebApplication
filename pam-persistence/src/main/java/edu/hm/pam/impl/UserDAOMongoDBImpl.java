@@ -2,6 +2,7 @@ package edu.hm.pam.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -57,19 +59,27 @@ public class UserDAOMongoDBImpl implements UserDAO {
     }
 
     @Override
-    public User findUserByUserName(String userName) {
+    public boolean findUser(String userName, String password) {
 
-        User foundUser;
+        boolean foundUser;
 
         try {
-            Document document = collection.find(eq("_id", userName)).first();
-            String toJson = document.toJson();
-            foundUser = new Gson().fromJson(toJson, User.class);
+            Document document = collection.find(
+                    and(
+                            eq("_id", userName),
+                            eq("passWord", password))).first();
+            if (document != null) {
+                foundUser = true;
+            } else {
+                foundUser = false;
+            }
+            // String toJson = document.toJson();
+            // foundUser = new Gson().fromJson(toJson, User.class);
         } catch (NullPointerException npe) {
-            foundUser = null;
+            foundUser = false;
             logger.error(npe.getMessage(), npe);
         } catch (JsonSyntaxException jse) {
-            foundUser = null;
+            foundUser = false;
             logger.error(jse.getMessage(), jse);
         }
         return foundUser;
@@ -78,52 +88,59 @@ public class UserDAOMongoDBImpl implements UserDAO {
     @Override
     public User updateUser(User user) {
 
-        String str_representation = new Gson().toJson(user);
         User updatedUser;
 
-        try {
-            Document document = collection.find(new Document("_id", user.getUserName())).first();
-            Document newDocument = Document.parse(str_representation);
-            collection.findOneAndReplace(document, newDocument);
+        BasicDBObject updateFields = new BasicDBObject();
+        updateFields.append("passWord", user.getPassWord());
+        updateFields.append("email", user.getEmail());
 
-            String toJson = newDocument.toJson();
-            updatedUser = this.findUserByUserName(toJson);
+        BasicDBObject setQuery = new BasicDBObject();
+        setQuery.append("$set", updateFields);
+
+        BasicDBObject searchQuery = new BasicDBObject("_id", user.getUserName());
+
+        collection.updateOne(searchQuery, setQuery);
+
+        try {
+            Document foundUser = collection.find(
+                    eq("_id", user.getUserName())).first();
+            String toJson = foundUser.toJson();
+            updatedUser = new Gson().fromJson(toJson, User.class);
+
         } catch (NullPointerException npe) {
             updatedUser = null;
             logger.error(npe.getMessage(), npe);
+        } catch (IllegalArgumentException iae) {
+            updatedUser = null;
+            logger.error(iae.getMessage(), iae);
         }
         return updatedUser;
     }
 
     @Override
     public boolean deleteUser(String userName) {
-        return false;
-    }
-
-    // @Override
-    public boolean deleteUser(User user) {
-
-        boolean status;
+        boolean userIsDeleted;
 
         try {
-            if (findUserByUserName(user.getUserName()) != null) {
-                collection.findOneAndDelete(new Document("_id", user.getUserName()));
-                status = true;
+            Document document = collection.find(eq("_id", userName)).first();
+            if (document != null) {
+                collection.deleteOne(document);
+                userIsDeleted = true;
             } else {
-                status = false;
+                userIsDeleted = false;
             }
         } catch (NullPointerException npe) {
-            status = false;
+            userIsDeleted = false;
             logger.error(npe.getMessage(), npe);
         }
-        return status;
+        return userIsDeleted;
     }
 
     @Override
     public List<User> findAllUsers() {
 
-        User foundUser;
         List<User> userList = new ArrayList<>();
+        User foundUser;
 
         try {
             List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
@@ -135,10 +152,8 @@ public class UserDAOMongoDBImpl implements UserDAO {
                 userList.add(foundUser);
             }
         } catch (NullPointerException npe) {
-            foundUser = null;
             logger.error(npe.getMessage(), npe);
         } catch (JsonSyntaxException jse) {
-            foundUser = null;
             logger.error(jse.getMessage(), jse);
         }
         return userList;
@@ -150,15 +165,17 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
 
-        user.setUserName("test");
-        user.setPassWord("test");
+        user.setUserName("Faerman");
+        user.setPassWord("yyy");
+        user.setEmail("xxx@hghg.de");
 
         // userDAOMongoDB.findAllPhotoAlbenByUserId(user);
-        userDAOMongoDB.createUser(user);
+        // userDAOMongoDB.createUser(user);
         // userDAOMongoDB.deleteUser(user);
+        userDAOMongoDB.updateUser(user);
         // User status = userDAOMongoDB.findUser(user);
         // User status = userDAOMongoDB.updateUser(user);
         // userDAOMongoDB.findAllUsers();
-        System.out.println(userDAOMongoDB.findUserByUserName("Faerman"));
+        // System.out.println(userDAOMongoDB.findUserByUserName("Faerman"));
     }
 }

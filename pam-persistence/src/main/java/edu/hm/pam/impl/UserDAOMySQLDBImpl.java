@@ -16,15 +16,9 @@ public class UserDAOMySQLDBImpl implements UserDAO {
     }
 
     @Override
-    public User findUserByUserName(String userName) {
-        return null;
+    public boolean findUser(String userName, String password) {
+        return false;
     }
-
-    // @Override
-    // public void createUser(User user) {
-    //
-    // }
-    //
 
     @Override
     public User updateUser(User user) {

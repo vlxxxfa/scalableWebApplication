@@ -11,7 +11,7 @@ public interface UserDAO {
 
     boolean createUser(User user);
 
-    User findUserByUserName(String userName);
+    boolean findUser(String userName, String password);
 
     User updateUser(User user);
 

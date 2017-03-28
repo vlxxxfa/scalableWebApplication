@@ -11,7 +11,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/{userName}/users/")
+@RequestMapping(value = "/users/")
 public class UserController {
 
     // final static Logger LOGGER = Logger.getLogger( UserController.class.getName() );
@@ -28,9 +28,10 @@ public class UserController {
         return this.userService.createUser(user);
     }
 
-    @RequestMapping(value = "findUserByUserName", method = RequestMethod.GET)
-    public User findUserByUserName(@PathVariable(value = "userName") String userName) {
-        return this.userService.findUserByUserName(userName);
+    @RequestMapping(value = "findUser/{userName}/{passWord}", method = RequestMethod.GET)
+    public boolean findUser(@PathVariable(value = "userName") String userName,
+                         @PathVariable(value = "passWord") String password) {
+        return this.userService.findUser(userName, password);
     }
 
     @RequestMapping(path = "updateUser", method = RequestMethod.GET)
@@ -38,7 +39,7 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @RequestMapping(value = "deleteUser", method = RequestMethod.GET)
+    @RequestMapping(value = "deleteUser/{userName}", method = RequestMethod.GET)
     public boolean deleteUser(@PathVariable(value = "userName") String userName) {
         return userService.deleteUser(userName);
     }
