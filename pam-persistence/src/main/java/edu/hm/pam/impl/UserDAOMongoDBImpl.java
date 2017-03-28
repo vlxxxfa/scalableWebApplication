@@ -38,12 +38,13 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         Gson gson = new Gson();
         String str_representation = gson.toJson(user);
+        Document doc = Document.parse(str_representation);
 
         try {
             Document foundUser = collection.find(eq("_id", user.getUserName())).first();
             if (foundUser == null) {
-                collection.insertOne(Document.parse(str_representation).append("_id", user.getUserName()));
-                System.out.println("User doesn't exist -> Inserted");
+                collection.insertOne(doc.append("_id", user.getUserName()));
+                System.out.println("User didn't exist -> Inserted");
                 status = true;
             } else {
                 status = false;
@@ -150,7 +151,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
 
         User user = new User();
 
-        user.setUserName("Faerman");
+        user.setUserName("Ortlieb");
         user.setPassWord("password");
 
         // userDAOMongoDB.findAllPhotoAlbenByUserId(user);
