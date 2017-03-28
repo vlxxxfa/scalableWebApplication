@@ -217,7 +217,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         System.out.println(photoDAOMongoDB.createPhotoByAlbumTitleOfUser("test", "albumSecond2", photo));
         // System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("test", "album"));
         // photoDAOMongoDB.getPhotoAlbum("Faerman", "album");
-
         // System.out.println(status);
     }
 }
