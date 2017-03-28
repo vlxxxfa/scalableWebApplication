@@ -33,6 +33,7 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");
 
+    @Override
     public boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) {
         boolean status = false;
 

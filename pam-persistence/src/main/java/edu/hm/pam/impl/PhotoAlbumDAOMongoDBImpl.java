@@ -44,14 +44,19 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
         Document addNewPhotoAlbumToUser = new Document("$push", new Document("photoAlbumList", doc));
 
         try {
+            Document foundUser = collection.find(eq("_id", userName)).first();
             Document foundUserWithSamePhotoAlbum = collection.find(
                     and(
                             eq("_id", userName),
                             eq("photoAlbumList.albumTitle", photoAlbum.getAlbumTitle()))).first();
-            if (foundUserWithSamePhotoAlbum == null) {
-                collection.updateOne(eq("_id", userName),
-                        addNewPhotoAlbumToUser);
-                status = true;
+            if (foundUser != null) {
+                if (foundUserWithSamePhotoAlbum == null) {
+                    collection.updateOne(eq("_id", userName),
+                            addNewPhotoAlbumToUser);
+                    status = true;
+                } else {
+                    status = false;
+                }
             } else {
                 status = false;
             }

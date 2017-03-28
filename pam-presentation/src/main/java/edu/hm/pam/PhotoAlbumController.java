@@ -24,7 +24,7 @@ public class PhotoAlbumController {
     }
 
     @RequestMapping(value = "createPhotoAlbumByUserName")
-    public boolean createPhotoAlbumByUserName(String userName, @RequestBody PhotoAlbum photoAlbum){
+    public boolean createPhotoAlbumByUserName(@PathVariable String userName, @RequestBody PhotoAlbum photoAlbum){
         return photoAlbumService.createPhotoAlbumByUserName(userName, photoAlbum);
     }
 
