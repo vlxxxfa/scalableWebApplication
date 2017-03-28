@@ -43,8 +43,8 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public boolean deletePhoto(Photo photo) {
-        return photoDAO.deletePhoto(photo);
+    public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo) {
+        return photoDAO.deletePhotoByUserNameAndPhotoAlbumTitle(userName, albumTitle, photo);
     }
 
     @Override

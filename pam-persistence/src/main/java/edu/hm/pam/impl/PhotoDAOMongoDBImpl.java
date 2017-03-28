@@ -7,6 +7,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.UpdateResult;
 import edu.hm.pam.PhotoDAO;
 import edu.hm.pam.entity.Photo;
 import org.bson.Document;
@@ -28,14 +29,14 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
     static final Logger logger = LoggerFactory.getLogger(PhotoDAOMongoDBImpl.class);
 
-    // // TODO: 22.03.17 to insert a MongoConnection in an exclude class
+    // TODO: 22.03.17 to insert a MongoConnection in an exclude class
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");
 
     @Override
     public boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) {
-        boolean status = false;
+        boolean status;
 
         Gson gson = new Gson();
         String str_representation = gson.toJson(photo);
@@ -57,7 +58,7 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
                             eq("_id", userName),
                             eq("photoAlbumList.albumTitle", albumTitle),
                             eq("photoAlbumList.photoList.title", photo.getTitle()))).first();
-            if (foundPhotoInPhotoAlbumByUser == null){
+            if (foundPhotoInPhotoAlbumByUser == null) {
                 collection.updateOne(query, command);
                 status = true;
                 System.out.println("Photo didn't' exist -> Photo inserted");
@@ -71,7 +72,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         }
         return status;
     }
-
 
     @Override
     public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) {
@@ -117,38 +117,51 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         } catch (JsonSyntaxException jse) {
             foundPhoto = null;
             logger.error(jse.getMessage(), jse);
-
         }
         return foundPhoto;
     }
 
     @Override
     public Photo updatePhoto(Photo photo) {
-        String str_representation = new Gson().toJson(photo);
-        Photo updatedPhoto;
-
-        try {
-            Document document = collection.find(new Document("_id", photo.getTitle())).first();
-            Document newDocument = Document.parse(str_representation);
-            collection.findOneAndReplace(document, newDocument);
-
-            String toJson = newDocument.toJson();
-            updatedPhoto = this.findPhoto(new Gson().fromJson(toJson, Photo.class));
-        } catch (NullPointerException npe) {
-            updatedPhoto = null;
-            logger.error(npe.getMessage(), npe);
-        }
-        return updatedPhoto;
+        return null;
     }
 
     @Override
-    public boolean deletePhoto(Photo photo) {
+    public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo) {
         boolean status;
 
+        Gson gson = new Gson();
+        String str_representation = gson.toJson(photo);
+        Document doc = Document.parse(str_representation);
+
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", userName);
+        query.put("photoAlbumList.albumTitle", albumTitle);
+
+        BasicDBObject data = new BasicDBObject();
+        data.put("photoAlbumList.$.photoList", doc);
+
+        BasicDBObject command = new BasicDBObject();
+        command.put("$pull", data);
+
         try {
-            if (findPhoto(photo) != null) {
-                collection.findOneAndDelete(new Document("_id", photo.getTitle()));
-                status = true;
+            Document foundUser = collection.find(eq("_id", userName)).first();
+            Document foundPhotoAlbumByUser = collection.find(
+                    and(
+                            eq("_id", userName),
+                            eq("photoAlbumList.albumTitle", albumTitle))).first();
+            if (foundUser != null) {
+                if (foundPhotoAlbumByUser != null) {
+                    UpdateResult updateResult = collection.updateOne(query, command);
+                    // TODO: ueberpruefen, ob Document erfolgreich aktualisiert ist...
+                    if (updateResult.wasAcknowledged()) {
+                        status = true;
+                    } else {
+                        status = false;
+                    }
+                } else {
+                    status = false;
+                }
             } else {
                 status = false;
             }
@@ -183,7 +196,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         return photoList;
     }
 
-
     public static void main(String[] args) {
 
         PhotoDAOMongoDBImpl photoDAOMongoDB = new PhotoDAOMongoDBImpl();
@@ -198,7 +210,8 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         // Photo status = photoDAOMongoDB.findPhoto(photo);
         // Photo status = photoDAOMongoDB.updatePhoto(photo);
         // System.out.print(photoDAOMongoDB.findAllPhotos());
-        System.out.println(photoDAOMongoDB.createPhotoByAlbumTitleOfUser("test", "albumSecond2", photo));
+        System.out.println(photoDAOMongoDB.deletePhotoByUserNameAndPhotoAlbumTitle(
+                "Test", "newAlbum1", photo));
         // System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("test", "album"));
         // photoDAOMongoDB.getPhotoAlbum("Faerman", "album");
         // System.out.println(status);

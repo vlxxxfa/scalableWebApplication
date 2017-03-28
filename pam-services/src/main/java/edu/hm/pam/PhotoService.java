@@ -17,7 +17,7 @@ public interface PhotoService {
 
     Photo updatePhoto(Photo photo);
 
-    boolean deletePhoto(Photo photo);
+    boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo);
 
     List<Photo> findAllPhotos();
 }
