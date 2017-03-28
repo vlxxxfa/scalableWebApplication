@@ -11,7 +11,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/{userName}/{albumTitle}/photos")
+@RequestMapping(value = "/{userName}/{albumTitle}/photos/")
 public class PhotoController {
 
     // static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
@@ -23,34 +23,36 @@ public class PhotoController {
         this.photoService = photoService;
     }
 
-    @RequestMapping(path = "/createPhotoByAlbumTitleOfUser", method = RequestMethod.GET)
+    @RequestMapping(path = "createPhotoByAlbumTitleOfUser", method = RequestMethod.GET)
     public boolean createPhotoByAlbumTitleOfUser(
             @PathVariable String userName, @PathVariable String albumTitle, @RequestBody Photo photo) {
         return this.photoService.createPhotoByAlbumTitleOfUser(userName, albumTitle, photo);
     }
 
     @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle")
-    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable String userName,
-                                                                 @PathVariable String albumTitle) {
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
+                                                                 @PathVariable(value = "albumTitle") String albumTitle) {
         return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
     }
 
-    @RequestMapping(value = "/findPhoto", method = RequestMethod.GET)
+    @RequestMapping(value = "findPhoto", method = RequestMethod.GET)
     public Photo findPhoto(@RequestBody Photo photo) {
         return this.photoService.findPhoto(photo);
     }
 
-    @RequestMapping(path = "/updatePhoto", method = RequestMethod.GET)
+    @RequestMapping(path = "updatePhoto", method = RequestMethod.GET)
     public Photo updatePhoto(@RequestBody Photo photo) {
         return photoService.updatePhoto(photo);
     }
 
-    @RequestMapping(value = "/deletePhoto", method = RequestMethod.GET)
-    public boolean deletePhoto(@RequestBody Photo photo) {
-        return photoService.deletePhoto(photo);
+    @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle", method = RequestMethod.GET)
+    public boolean deletePhotoByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
+                                                           @PathVariable(value = "albumTitle") String albumTitle,
+                                                           @RequestBody Photo photo) {
+        return photoService.deletePhotoByUserNameAndPhotoAlbumTitle(userName, albumTitle, photo);
     }
 
-    @RequestMapping(value = "/findAllPhotos", method = RequestMethod.GET)
+    @RequestMapping(value = "findAllPhotos", method = RequestMethod.GET)
     public List<Photo> findAllPhotos() {
         return photoService.findAllPhotos();
     }
