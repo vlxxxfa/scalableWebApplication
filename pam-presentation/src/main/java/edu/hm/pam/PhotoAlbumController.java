@@ -24,12 +24,12 @@ public class PhotoAlbumController {
     }
 
     @RequestMapping(value = "createPhotoAlbumByUserName")
-    public boolean createPhotoAlbumByUserName(@PathVariable String userName, @RequestBody PhotoAlbum photoAlbum){
+    public boolean createPhotoAlbumByUserName(@PathVariable String userName, @RequestBody PhotoAlbum photoAlbum) {
         return photoAlbumService.createPhotoAlbumByUserName(userName, photoAlbum);
     }
 
     @RequestMapping(path = "findAllPhotoAlbenByUserName")
-    public List<PhotoAlbum> findAllPhotoAlbenByUserName(@PathVariable("userName") String userName){
+    public List<PhotoAlbum> findAllPhotoAlbenByUserName(@PathVariable("userName") String userName) {
         return photoAlbumService.findAllPhotoAlbenByUserName(userName);
     }
 
@@ -38,9 +38,10 @@ public class PhotoAlbumController {
         return photoAlbumService.updatePhotoAlbum(photoAlbum);
     }
 
-    @RequestMapping(value = "deletePhotoAlbum", method = RequestMethod.GET)
-    public boolean deletePhotoAlbum(@RequestBody PhotoAlbum photoAlbum) {
-        return photoAlbumService.deletePhotoAlbum(photoAlbum);
+    @RequestMapping(value = "deletePhotoAlbumByUserName/{albumTitle}", method = RequestMethod.GET)
+    public boolean deletePhotoAlbumByUserName(@PathVariable("userName") String userName,
+                                              @PathVariable("albumTitle") String albumTitle) {
+        return photoAlbumService.deletePhotoAlbumByUserName(userName, albumTitle);
     }
 
 }

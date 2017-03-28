@@ -1,7 +1,7 @@
 package edu.hm.pam.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
@@ -90,31 +90,31 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
 
     @Override
     public PhotoAlbum updatePhotoAlbum(PhotoAlbum photoAlbum) {
-        String str_representation = new Gson().toJson(photoAlbum);
-        PhotoAlbum updatedPhotoAlbum;
-
-        try {
-            Document document = collection.find(new Document("_id", photoAlbum.getAlbumTitle())).first();
-            Document newDocument = Document.parse(str_representation);
-            collection.findOneAndReplace(document, newDocument);
-
-            String toJson = newDocument.toJson();
-            updatedPhotoAlbum = this.findPhotoAlbum(new Gson().fromJson(toJson, PhotoAlbum.class));
-        } catch (NullPointerException npe) {
-            updatedPhotoAlbum = null;
-            logger.error(npe.getMessage(), npe);
-        }
-        return updatedPhotoAlbum;
+        return null;
     }
 
     @Override
-    public boolean deletePhotoAlbum(PhotoAlbum photoAlbum) {
+    public boolean deletePhotoAlbumByUserName(String userName, String albumTitle) {
         boolean status;
 
+        BasicDBObject sq = new BasicDBObject("userName", userName);
+        BasicDBObject idoc = new BasicDBObject("albumTitle", albumTitle);
+        BasicDBObject odoc = new BasicDBObject("photoAlbumList", idoc);
+        BasicDBObject delq = new BasicDBObject("$pull", odoc);
+
         try {
-            if (findPhotoAlbum(photoAlbum) != null) {
-                collection.findOneAndDelete(new Document("_id", photoAlbum.getAlbumTitle()));
-                status = true;
+            Document foundUser = collection.find(eq("_id", userName)).first();
+            Document foundPhotoAlbum = collection.find(
+                    and(
+                            eq("_id", userName),
+                            eq("photoAlbumList.albumTitle", albumTitle))).first();
+            if (foundUser != null) {
+                if (foundPhotoAlbum != null) {
+                    collection.updateOne(sq, delq);
+                    status = true;
+                } else {
+                    status = false;
+                }
             } else {
                 status = false;
             }
@@ -123,59 +123,5 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
             logger.error(npe.getMessage(), npe);
         }
         return status;
-    }
-
-    public PhotoAlbum findPhotoAlbum(PhotoAlbum photoAlbum) {
-
-        PhotoAlbum foundPhotoAlbum;
-
-        try {
-            Document document = collection.find(new Document("_id", photoAlbum.getAlbumTitle())).first();
-            String toJson = document.toJson();
-            foundPhotoAlbum = new Gson().fromJson(toJson, PhotoAlbum.class);
-        } catch (NullPointerException npe) {
-            foundPhotoAlbum = null;
-            logger.error(npe.getMessage(), npe);
-        } catch (JsonSyntaxException jse) {
-            foundPhotoAlbum = null;
-            logger.error(jse.getMessage(), jse);
-
-        }
-        return foundPhotoAlbum;
-    }
-
-    public static void main(String[] args) {
-
-        PhotoAlbumDAOMongoDBImpl photoAlbumDAOMongoDB = new PhotoAlbumDAOMongoDBImpl();
-
-        // Photo photo = new Photo();
-        // photo.setTitle("London");
-        // Photo photo1 = new Photo();
-        // photo1.setTitle("Bayern");
-        // Photo photo2 = new Photo();
-        // photo2.setTitle("Paris");
-
-        PhotoAlbum photoAlbum = new PhotoAlbum();
-        photoAlbum.setAlbumTitle("album");
-
-        PhotoAlbum photoAlbumSecond = new PhotoAlbum();
-        photoAlbumSecond.setAlbumTitle("albumSecond2");
-
-        // List<PhotoAlbum> photoAlbumList = new ArrayList<>();
-        // photoAlbumList.add(photoAlbum);
-
-        // photo.setPhotoAlben(photoAlbumList);
-        // photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Ortlieb", photoAlbum);
-        // photoAlbumDAOMongoDB.createPhotoAlbumByUserName("Faerman", photoAlbumSecond);
-        // photoAlbumDAOMongoDB.testCreatePhotoAlbum("Faerman", photoAlbum);
-        photoAlbumDAOMongoDB.createPhotoAlbumByUserName("test", photoAlbumSecond);
-        // boolean status = photoAlbumDAOMongoDB.deletePhotoAlbum(photoAlbum);
-        // Photo status = photoAlbumDAOMongoDB.findPhoto(photo);
-        // Photo status = photoAlbumDAOMongoDB.updatePhoto(photo);
-        // List<PhotoAlbum> allPhotoAlbenByUserName = photoAlbumDAOMongoDB.findAllPhotoAlbenByUserName("Faerman");
-        // for (PhotoAlbum photoAlbum1 : allPhotoAlbenByUserName) {
-        //     System.out.println(photoAlbum1.toString());
-        //
-        // }
     }
 }

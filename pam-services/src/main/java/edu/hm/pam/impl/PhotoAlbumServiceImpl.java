@@ -37,7 +37,7 @@ public class PhotoAlbumServiceImpl implements PhotoAlbumService {
     }
 
     @Override
-    public boolean deletePhotoAlbum(PhotoAlbum photoAlbum) {
-        return photoAlbumDAO.deletePhotoAlbum(photoAlbum);
+    public boolean deletePhotoAlbumByUserName(String userName, String albumTitle) {
+        return photoAlbumDAO.deletePhotoAlbumByUserName(userName, albumTitle);
     }
 }

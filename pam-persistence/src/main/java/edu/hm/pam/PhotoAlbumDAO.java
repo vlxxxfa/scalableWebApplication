@@ -15,5 +15,5 @@ public interface PhotoAlbumDAO {
 
     PhotoAlbum updatePhotoAlbum(PhotoAlbum photoAlbum);
 
-    boolean deletePhotoAlbum(PhotoAlbum photoAlbum);
+    boolean deletePhotoAlbumByUserName(String userName, String albumTitle);
 }

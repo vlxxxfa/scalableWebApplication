@@ -58,7 +58,6 @@ public class User {
 
         if (!userName.equals(user.userName)) return false;
         return passWord.equals(user.passWord);
-
     }
 
     @Override
