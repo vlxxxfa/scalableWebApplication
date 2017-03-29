@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * Created by vlfa on 15.03.17.
  */
-@CrossOrigin
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/{userName}/{albumTitle}/photos/")
 public class PhotoController {
 
@@ -23,7 +23,7 @@ public class PhotoController {
         this.photoService = photoService;
     }
 
-    @RequestMapping(path = "createPhotoByAlbumTitleOfUser", method = RequestMethod.GET)
+    @RequestMapping(path = "createPhotoByAlbumTitleOfUser", method = RequestMethod.POST)
     public boolean createPhotoByAlbumTitleOfUser(
             @PathVariable String userName, @PathVariable String albumTitle, @RequestBody Photo photo) {
         return this.photoService.createPhotoByAlbumTitleOfUser(userName, albumTitle, photo);
@@ -45,7 +45,7 @@ public class PhotoController {
         return photoService.updatePhoto(photo);
     }
 
-    @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle", method = RequestMethod.GET)
+    @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle", method = RequestMethod.POST)
     public boolean deletePhotoByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
                                                            @PathVariable(value = "albumTitle") String albumTitle,
                                                            @RequestBody Photo photo) {

@@ -23,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(path = "createUser", method = RequestMethod.GET)
+    @RequestMapping(path = "createUser", method = RequestMethod.POST)
     public boolean createUser(@RequestBody User user) {
         return this.userService.createUser(user);
     }
@@ -34,12 +34,12 @@ public class UserController {
         return this.userService.findUser(userName, password);
     }
 
-    @RequestMapping(path = "updateUser", method = RequestMethod.GET)
+    @RequestMapping(path = "updateUser", method = RequestMethod.POST)
     public User updateUser(@RequestBody User user) {
         return userService.updateUser(user);
     }
 
-    @RequestMapping(value = "deleteUser/{userName}", method = RequestMethod.GET)
+    @RequestMapping(value = "deleteUser/{userName}", method = RequestMethod.POST)
     public boolean deleteUser(@PathVariable(value = "userName") String userName) {
         return userService.deleteUser(userName);
     }
