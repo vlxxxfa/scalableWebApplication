@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * Created by vlfa on 15.03.17.
  */
-@RestController
 @CrossOrigin(origins = "*")
+@RestController
 @RequestMapping(value = "/{userName}/{albumTitle}/photos/")
 public class PhotoController {
 

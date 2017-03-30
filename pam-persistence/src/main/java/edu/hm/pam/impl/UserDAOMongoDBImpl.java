@@ -45,7 +45,7 @@ public class UserDAOMongoDBImpl implements UserDAO {
         try {
             Document foundUser = collection.find(
                     eq("_id", user.getUserName())).first();
-            if (foundUser == null) {
+            if (foundUser == null && (user.getUserName() != null && user.getPassWord() != null)) {
                 collection.insertOne(doc.append("_id", user.getUserName()));
                 status = true;
             } else {

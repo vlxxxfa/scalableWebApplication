@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by vlfa on 15.03.17.
  */
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/users/")
 public class UserController {
