@@ -24,8 +24,8 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException {
-        return photoDAO.createPhotoByAlbumTitleOfUser(userName, albumTitle, photo);
+    public boolean savePhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException {
+        return photoDAO.savePhotoByAlbumTitleOfUser(userName, albumTitle, photo);
     }
 
     @Override
@@ -34,22 +34,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public Photo findPhoto(Photo photo) {
-        return photoDAO.findPhoto(photo);
-    }
-
-    @Override
-    public Photo updatePhoto(Photo photo) {
-        return photoDAO.updatePhoto(photo);
-    }
-
-    @Override
     public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo) {
         return photoDAO.deletePhotoByUserNameAndPhotoAlbumTitle(userName, albumTitle, photo);
-    }
-
-    @Override
-    public List<Photo> findAllPhotos() {
-        return photoDAO.findAllPhotos();
     }
 }

@@ -1,7 +1,6 @@
 package edu.hm.pam.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
@@ -42,7 +41,7 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     private GridFS gfsPhoto = new GridFS(mongo.getDB("qwertz"), "photos");
 
     @Override
-    public boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException {
+    public boolean savePhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException {
 
         //  convert a MultipartFile to File
         // File file = new File(photo.getMultipartFile().getOriginalFilename());
@@ -162,29 +161,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     }
 
     @Override
-    public Photo findPhoto(Photo photo) {
-        Photo foundPhoto;
-
-        try {
-            Document document = collection.find(new Document("_id", photo.getTitle())).first();
-            String toJson = document.toJson();
-            foundPhoto = new Gson().fromJson(toJson, Photo.class);
-        } catch (NullPointerException npe) {
-            foundPhoto = null;
-            logger.error(npe.getMessage(), npe);
-        } catch (JsonSyntaxException jse) {
-            foundPhoto = null;
-            logger.error(jse.getMessage(), jse);
-        }
-        return foundPhoto;
-    }
-
-    @Override
-    public Photo updatePhoto(Photo photo) {
-        return null;
-    }
-
-    @Override
     public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo) {
         boolean status;
 
@@ -228,30 +204,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
             logger.error(npe.getMessage(), npe);
         }
         return status;
-    }
-
-    @Override
-    public List<Photo> findAllPhotos() {
-
-        Photo foundPhoto;
-        List<Photo> photoList = new ArrayList<>();
-
-        try {
-            List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
-
-            for (Document document : listOfFoundedDocuments) {
-                String toJson = document.toJson();
-                foundPhoto = new Gson().fromJson(toJson, Photo.class);
-                photoList.add(foundPhoto);
-            }
-        } catch (NullPointerException npe) {
-            foundPhoto = null;
-            logger.error(npe.getMessage(), npe);
-        } catch (JsonSyntaxException jse) {
-            foundPhoto = null;
-            logger.error(jse.getMessage(), jse);
-        }
-        return photoList;
     }
 
     public static void main(String[] args) throws IOException {

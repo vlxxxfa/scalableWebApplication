@@ -46,7 +46,7 @@ public class PhotoController {
                 Photo photo = new Photo();
                 photo.setTitle(file.getOriginalFilename());
                 photo.setMultipartFile(file);
-                result = this.photoService.createPhotoByAlbumTitleOfUser(userName, albumTitle, photo);
+                result = this.photoService.savePhotoByAlbumTitleOfUser(userName, albumTitle, photo);
             } catch (Exception e) {
                 result = false;
                 System.out.println("failed to upload the file: " + file + " => " + e.getMessage());
@@ -62,21 +62,10 @@ public class PhotoController {
         return result;
     }
 
-
     @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle")
     public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
                                                                  @PathVariable(value = "albumTitle") String albumTitle) {
         return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
-    }
-
-    @RequestMapping(value = "findPhoto", method = RequestMethod.GET)
-    public Photo findPhoto(@RequestBody Photo photo) {
-        return this.photoService.findPhoto(photo);
-    }
-
-    @RequestMapping(path = "updatePhoto", method = RequestMethod.GET)
-    public Photo updatePhoto(@RequestBody Photo photo) {
-        return photoService.updatePhoto(photo);
     }
 
     @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle", method = RequestMethod.POST)
@@ -84,10 +73,5 @@ public class PhotoController {
                                                            @PathVariable(value = "albumTitle") String albumTitle,
                                                            @RequestBody Photo photo) {
         return photoService.deletePhotoByUserNameAndPhotoAlbumTitle(userName, albumTitle, photo);
-    }
-
-    @RequestMapping(value = "findAllPhotos", method = RequestMethod.GET)
-    public List<Photo> findAllPhotos() {
-        return photoService.findAllPhotos();
     }
 }

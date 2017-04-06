@@ -10,15 +10,9 @@ import java.util.List;
  */
 public interface PhotoDAO {
 
+    boolean savePhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException;
+
     List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle);
 
-    boolean createPhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException;
-
-    Photo findPhoto(Photo photo);
-
-    Photo updatePhoto(Photo photo);
-
     boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo);
-
-    List<Photo> findAllPhotos();
 }
