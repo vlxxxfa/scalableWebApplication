@@ -10,6 +10,10 @@ import com.mongodb.client.MongoDatabase;
 import edu.hm.pam.UserDAO;
 import edu.hm.pam.entity.User;
 import org.bson.Document;
+import org.bson.codecs.BsonTypeClassMap;
+import org.bson.codecs.DocumentCodec;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -145,8 +149,14 @@ public class UserDAOMongoDBImpl implements UserDAO {
         try {
             List<Document> listOfFoundedDocuments = collection.find().into(new ArrayList<>());
 
+            // Exception: org.bson.codecs.configuration.CodecConfigurationException:
+            // Can't find a codec for class com.mongodb.DBRef.
+            // URL: http://stackoverflow.com/questions/31827635/resolve-dbref-into-json
+            CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry());
+            final DocumentCodec codec = new DocumentCodec(codecRegistry, new BsonTypeClassMap());
+
             for (Document document : listOfFoundedDocuments) {
-                String toJson = document.toJson();
+                String toJson = document.toJson(codec);
                 foundUser = new Gson().fromJson(toJson, User.class);
                 System.out.print(foundUser);
                 userList.add(foundUser);

@@ -1,5 +1,9 @@
 package edu.hm.pam.entity;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+
 /**
  * Created by vlfa on 15.03.17.
  */
@@ -7,6 +11,10 @@ package edu.hm.pam.entity;
 public class Photo {
 
     private String title;
+
+    private MultipartFile multipartFile;
+
+    private File file;
 
     public String getTitle() {
         return title;
@@ -16,20 +24,29 @@ public class Photo {
         this.title = title;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
 
-        Photo photo = (Photo) o;
-        if (!this.title.equals(photo.getTitle())) {
-            return false;
-        }
-        return title.equals(photo.title);
+    public void setMultipartFile(MultipartFile multipartFile) {
+        this.multipartFile = multipartFile;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     @Override
-    public int hashCode() {
-        return title.hashCode();
+    public String toString() {
+        return "Photo{" +
+                "title='" + title + '\'' +
+                ", multipartFile=" + multipartFile +
+                '}';
     }
 }
+
+
