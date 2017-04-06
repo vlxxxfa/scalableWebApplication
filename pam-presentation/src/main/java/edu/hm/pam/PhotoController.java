@@ -35,8 +35,8 @@ public class PhotoController {
             @PathVariable String albumTitle,
             @RequestParam("file") MultipartFile file) throws IOException {
 
-        System.out.println("MultipartFile OriginalFilename is: " + file.getOriginalFilename());
-        System.out.println("MultipartFile Name is: " + file.getName());
+        // System.out.println("MultipartFile OriginalFilename is: " + file.getOriginalFilename());
+        // System.out.println("MultipartFile Name is: " + file.getName());
 
         boolean result;
 
@@ -44,7 +44,10 @@ public class PhotoController {
             try {
                 System.out.println("worked");
                 Photo photo = new Photo();
-                photo.setTitle(file.getOriginalFilename());
+
+                String extensionRemoved = file.getOriginalFilename().split("\\.")[0];
+                // System.out.println("extensionRemoved: " + extensionRemoved);
+                photo.setTitle(extensionRemoved);
                 photo.setMultipartFile(file);
                 result = this.photoService.savePhotoByAlbumTitleOfUser(userName, albumTitle, photo);
             } catch (Exception e) {
