@@ -29,7 +29,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle){
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) throws IOException {
         return photoDAO.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
     }
 

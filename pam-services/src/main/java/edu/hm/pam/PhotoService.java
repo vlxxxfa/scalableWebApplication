@@ -12,7 +12,7 @@ public interface PhotoService {
 
     boolean savePhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException;
 
-    List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle);
+    List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) throws IOException;
 
     boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo);
 }

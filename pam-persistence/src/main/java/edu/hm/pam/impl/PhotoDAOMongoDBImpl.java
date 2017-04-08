@@ -1,28 +1,24 @@
 package edu.hm.pam.impl;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBRef;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.GridFSBuckets;
-import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.gridfs.GridFSInputFile;
 import edu.hm.pam.PhotoDAO;
 import edu.hm.pam.entity.Photo;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,73 +37,27 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     private MongoClient mongo = new MongoClient("localhost", 27017);
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");
-    private GridFS gfsPhoto = new GridFS(mongo.getDB("qwertz"), "photos");
+    private GridFS gridFS = new GridFS(mongo.getDB("qwertz"), "photos");
 
     @Override
     public boolean savePhotoByAlbumTitleOfUser(String userName, String albumTitle, Photo photo) throws IOException {
 
-        // File file = new File(String.valueOf(photo.getMultipartFile().getBytes()));
-        // MultipartFile multipartFile = photo.getMultipartFile();
-        // multipartFile.transferTo(file);
-
-        // GridFSInputFile inputFile = gfsPhoto.createFile(file);
-        // inputFile.setFilename(photo.getTitle());
-        // inputFile.save();
-
-        // System.out.println("Founded GridFSInputFile by fileName: " + gfsPhoto.find(inputFile.getFilename()));
-
-
-        // for frontend request mit getMultipartFile
-        GridFSBucket gridFSBucket = GridFSBuckets.create(db, "photos");
-
-        ObjectId fileId;
-        try {
-            InputStream streamToUploadFrom = photo.getMultipartFile().getInputStream();
-            GridFSUploadOptions options = new GridFSUploadOptions()
-                    .metadata(new Document("contentType", "image/jpeg"));
-            fileId = gridFSBucket.uploadFromStream(photo.getTitle(), streamToUploadFrom, options);
-        } catch (FileNotFoundException fne) {
-            logger.error("Exception: " + fne.getMessage());
-        }
-
-        //
-        // GridFSFile out = gridFSBucket.find( new BasicDBObject( "_id" , photo.getTitle() ) ).first();
-        // //Save loaded image from database into new image file
-        // FileOutputStream outputImage = new FileOutputStream("../");
-        // System.out.println(out.getFilename());
-        // outputImage.close();
-
-        //     GridFS gridFS = new GridFS(mongo.getDB("qwertz"));
-
-        // GridFSInputFile gridFSInputFile1 = gridFS.createFile(photo.getMultipartFile().getBytes());
-        // System.out.println("PhotoDAOMongoDBImpl: " + photo.getMultipartFile().getOriginalFilename());
-        // System.out.println(gridFSInputFile1.getOutputStream());
-        // GridFSInputFile gridFSInputFile = null;
-        //
-        // try {
-        //     InputStream inputStream = photo.getMultipartFile().getInputStream();
-        //     gridFSInputFile = gridFS.createFile(inputStream);
-        //     gridFSInputFile.setFilename(photo.getMultipartFile().getOriginalFilename());
-        //     gridFSInputFile.setContentType(photo.getMultipartFile().getContentType());
-        //     // gridFSInputFile.saveChunks();
-        //     // gridFSInputFile.save();
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
-
         boolean status;
 
-        BasicDBObject query = new BasicDBObject();
+        GridFSInputFile gridFSInputFile = gridFS.createFile(photo.getMultipartFile().getInputStream());
+        gridFSInputFile.setFilename(photo.getTitle());
+        gridFSInputFile.setContentType(photo.getMultipartFile().getContentType());
+        gridFSInputFile.saveChunks();
+        gridFSInputFile.save();
+
+        Document query = new Document();
         query.put("_id", userName);
         query.put("photoAlbumList.albumTitle", albumTitle);
 
-        DBRef ref = new DBRef("photos", photo.getTitle());
-        System.out.println("photo.getTitle() in photos: " + ref);
+        Document data = new Document();
+        data.put("photoAlbumList.$.photoList", new DBRef("qwertz", "photos", gridFSInputFile.getId()));
 
-        BasicDBObject data = new BasicDBObject();
-        data.put("photoAlbumList.$.photoList", ref);
-
-        BasicDBObject command = new BasicDBObject();
+        Document command = new Document();
         command.put("$push", data);
 
         try {
@@ -117,14 +67,16 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
                             eq("_id", userName),
                             eq("photoAlbumList.albumTitle", albumTitle))).first();
             if (foundUser != null) {
-                if (foundUserWithPhotoAlbum != null && albumTitle != null) {
+                if (foundUserWithPhotoAlbum != null) {
                     collection.updateOne(query, command);
                     status = true;
                     System.out.println("Photo inserted");
                 } else {
+                    System.out.println("Photoalbum didn't find");
                     status = false;
                 }
             } else {
+                System.out.println("User didn't find");
                 status = false;
             }
         } catch (MongoWriteException mwe) {
@@ -135,9 +87,10 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     }
 
     @Override
-    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) {
+    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) throws IOException {
 
         List<Photo> photoList = new ArrayList<>();
+        Photo photo = new Photo();
         Document documentForFoundedPhotoAlbum = null;
 
         try {
@@ -152,38 +105,25 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
                 }
             }
             List<DBRef> referencesInFoundenPhotoAlbum = (List<DBRef>) documentForFoundedPhotoAlbum.get("photoList");
-            List<GridFSDBFile> photosGridFSDBFiles = new ArrayList<>();
 
             if (referencesInFoundenPhotoAlbum == null || referencesInFoundenPhotoAlbum.isEmpty()) {
                 return photoList;
             } else {
+
                 for (DBRef dbRef : referencesInFoundenPhotoAlbum) {
-                    GridFSDBFile imageForOutput = gfsPhoto.findOne((String) dbRef.getId());
-                    // InputStream in = imageForOutput.getInputStream();
-                    //
-                    // ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    // int data = 0;
-                    // try {
-                    //     data = in.read();
-                    // } catch (IOException e) {
-                    //     e.printStackTrace();
-                    // }
-                    // while (data >= 0) {
-                    //     out.write((char) data);
-                    //     try {
-                    //         data = in.read();
-                    //     } catch (IOException e) {
-                    //         e.printStackTrace();
-                    //     }
-                    // }
-                    // try {
-                    //     out.flush();
-                    // } catch (IOException e) {
-                    //     e.printStackTrace();
-                    // }
-                    photosGridFSDBFiles.add(imageForOutput);
-                    System.out.println("imageForOutput: " + imageForOutput.toString());
-                    // System.out.println(out);
+                    GridFSDBFile imageForOutput = gridFS.findOne((ObjectId) dbRef.getId());
+
+                    System.out.println("Foundedn GridFSDBFile with fileName: " + imageForOutput.getFilename());
+
+                    MultipartFile multiPartFile = createMultiPartFile(imageForOutput);
+
+                    photo.setTitle(multiPartFile.getOriginalFilename());
+
+                    photo.setMultipartFile(multiPartFile);
+
+                    photoList.add(photo);
+
+                    System.out.println("Photo '" + photo.getTitle() +  "' is added to photolist for present");
                 }
             }
         } catch (NullPointerException npe) {
@@ -192,13 +132,23 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         return photoList;
     }
 
+    private MultipartFile createMultiPartFile(GridFSDBFile gridFSDBFile) throws IOException {
+
+        String fileName = gridFSDBFile.getFilename();
+        String originalFileName = gridFSDBFile.getFilename();
+        String contentType = gridFSDBFile.getContentType();
+
+        MultipartFile multipartFile = new MockMultipartFile(fileName, originalFileName, contentType, gridFSDBFile.getInputStream());
+        return multipartFile;
+    }
+
     @Override
     public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo) {
 
         boolean status = false;
 
-        while (gfsPhoto.findOne(photo.getTitle()) != null) {
-            gfsPhoto.remove(gfsPhoto.findOne(photo.getTitle()));
+        while (gridFS.findOne(photo.getTitle()) != null) {
+            gridFS.remove(gridFS.findOne(photo.getTitle()));
             status = true;
         }
         return status;
@@ -210,9 +160,26 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
         File file = new File("/Users/vlfa/Dropbox/velo.jpeg");
 
+        // String name = "velo";
+        // String originalFileName = "velo.jpeg";
+        // String contentType = "image/jpeg";
+        // byte[] content = null;
+        //
+        // BufferedImage bufferedImage = ImageIO.read(file);
+        //
+        // // get DataBufferBytes from Raster
+        // WritableRaster raster = bufferedImage .getRaster();
+        // DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
+        //
+        // content = data.getData();
+        //
+        // MultipartFile multipartFile = new MockMultipartFile(name,
+        //         originalFileName, contentType, content);
+
         Photo photo = new Photo();
         photo.setTitle("ba");
         photo.setFile(file);
+        // photo.setMultipartFile(multipartFile);
 
         // photo.setPhotoAlben(photoAlbumList);
         // boolean status = photoDAOMongoDB.savePhoto(photo);
@@ -220,10 +187,10 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         // Photo status = photoDAOMongoDB.findPhoto(photo);
         // Photo status = photoDAOMongoDB.updatePhoto(photo);
         // System.out.print(photoDAOMongoDB.findAllPhotos());
-        System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("vfaerman", "album"));
+        // System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("vfaerman", "album"));
         // System.out.println(photoDAOMongoDB.savePhotoByAlbumTitleOfUser("vfaerman", "album", photo));
         // System.out.println(photoDAOMongoDB.deletePhotoByUserNameAndPhotoAlbumTitle("Test", "admin", photo));
-        // System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("test", "album"));
+        System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("asd", "album"));
         // photoDAOMongoDB.getPhotoAlbum("Faerman", "album");
         // System.out.println(status);
     }
