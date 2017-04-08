@@ -4,6 +4,9 @@ import edu.hm.pam.entity.Photo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,24 +32,18 @@ public class PhotoController {
         this.photoService = photoService;
     }
 
-    @RequestMapping(value = "createPhotoByAlbumTitleOfUser/", method = RequestMethod.POST)
-    public boolean createPhotoByAlbumTitleOfUser(
+    @RequestMapping(value = "savePhotoByAlbumTitleOfUser/", method = RequestMethod.POST)
+    public boolean savePhotoByAlbumTitleOfUser(
             @PathVariable String userName,
             @PathVariable String albumTitle,
             @RequestParam("file") MultipartFile file) throws IOException {
-
-        // System.out.println("MultipartFile OriginalFilename is: " + file.getOriginalFilename());
-        // System.out.println("MultipartFile Name is: " + file.getName());
 
         boolean result;
 
         if (!file.isEmpty()) {
             try {
-                System.out.println("worked");
                 Photo photo = new Photo();
-
                 String extensionRemoved = file.getOriginalFilename().split("\\.")[0];
-                // System.out.println("extensionRemoved: " + extensionRemoved);
                 photo.setTitle(extensionRemoved);
                 photo.setMultipartFile(file);
                 result = this.photoService.savePhotoByAlbumTitleOfUser(userName, albumTitle, photo);
@@ -58,18 +55,42 @@ public class PhotoController {
             result = false;
             System.out.println("failed to upload the file: " + file + ", because the file was empty.");
         }
-
-        // Photo photo = new Photo();
-        // photo.setPhotoData(file.getBytes());
-        // photo.setTitle(file.getOriginalFilename());
         return result;
     }
 
-    @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle")
-    public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
-                                                                 @PathVariable(value = "albumTitle") String albumTitle) {
-        return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
+
+    // With Spring 4.1 and above, you can return pretty much anything (such as pictures, pdfs, documents, jars, zips, etc) quite simply without any extra dependencies. For example, the following could be a method to return a user's profile picture from MongoDB GridFS:
+
+    @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadUserAvatarImage(@PathVariable(value = "userName") String userName,
+                                                                       @PathVariable(value = "albumTitle") String albumTitle) throws IOException {
+
+        final List<Photo> allPhotosByUserNameAndPhotoAlbumTitle = photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
+
+        ResponseEntity<InputStreamResource> body = null;
+        // GridFSDBFile gridFsFile = fileService.findUserAccountAvatarById(userId);
+
+        for (Photo photo : allPhotosByUserNameAndPhotoAlbumTitle) {
+            body = ResponseEntity.ok()
+                    .contentLength(photo.getMultipartFile().getSize())
+                    .contentType(MediaType.parseMediaType(photo.getMultipartFile().getContentType()))
+                    .body(new InputStreamResource(photo.getMultipartFile().getInputStream()));
+        }
+
+        // return ResponseEntity.ok()
+        //         .0contentLength(gridFsFile.getLength())
+        //         .contentType(MediaType.parseMediaType(gridFsFile.getContentType()))
+        //         .body(new InputStreamResource(gridFsFile.getInputStream()));
+        return body;
     }
+
+
+    // @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle")
+    // public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
+    //                                                              @PathVariable(value = "albumTitle") String albumTitle) throws IOException {
+    //     return photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
+    // }
 
     @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle", method = RequestMethod.POST)
     public boolean deletePhotoByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
