@@ -45,7 +45,10 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         boolean status;
 
         GridFSInputFile gridFSInputFile = gridFS.createFile(photo.getMultipartFile().getInputStream());
-        gridFSInputFile.setFilename(photo.getTitle());
+
+        String extensionRemoved = photo.getMultipartFile().getOriginalFilename().split("\\.")[0];
+
+        gridFSInputFile.setFilename(extensionRemoved);
         gridFSInputFile.setContentType(photo.getMultipartFile().getContentType());
         gridFSInputFile.saveChunks();
         gridFSInputFile.save();
@@ -90,8 +93,8 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
     public List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) throws IOException {
 
         List<Photo> photoList = new ArrayList<>();
-        Photo photo = new Photo();
         Document documentForFoundedPhotoAlbum = null;
+        Photo photo;
 
         try {
             Document foundUser = collection.find(new Document("_id", userName)).first();
@@ -112,18 +115,16 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
                 for (DBRef dbRef : referencesInFoundenPhotoAlbum) {
                     GridFSDBFile imageForOutput = gridFS.findOne((ObjectId) dbRef.getId());
-
-                    System.out.println("Foundedn GridFSDBFile with fileName: " + imageForOutput.getFilename());
-
-                    MultipartFile multiPartFile = createMultiPartFile(imageForOutput);
-
-                    photo.setTitle(multiPartFile.getOriginalFilename());
-
-                    photo.setMultipartFile(multiPartFile);
-
-                    photoList.add(photo);
-
-                    System.out.println("Photo '" + photo.getTitle() +  "' is added to photolist for present");
+                    photo = new Photo();
+                    if (imageForOutput != null) {
+                        // System.out.println("Founded GridFSDBFile with fileName: " + imageForOutput.getFilename());
+                        MultipartFile multiPartFile = createMultiPartFile(imageForOutput);
+                        photo.setMultipartFile(multiPartFile);
+                        photoList.add(photo);
+                        // System.out.println("Photo with _id'" + dbRef.getId() + "' is added to photolist for present");
+                    } else {
+                        return photoList;
+                    }
                 }
             }
         } catch (NullPointerException npe) {
@@ -147,8 +148,8 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
         boolean status = false;
 
-        while (gridFS.findOne(photo.getTitle()) != null) {
-            gridFS.remove(gridFS.findOne(photo.getTitle()));
+        while (gridFS.findOne(photo.getMultipartFile().getName()) != null) {
+            gridFS.remove(gridFS.findOne(photo.getMultipartFile().getName()));
             status = true;
         }
         return status;
@@ -177,8 +178,7 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         //         originalFileName, contentType, content);
 
         Photo photo = new Photo();
-        photo.setTitle("ba");
-        photo.setFile(file);
+        // photo.setFile(file);
         // photo.setMultipartFile(multipartFile);
 
         // photo.setPhotoAlben(photoAlbumList);
