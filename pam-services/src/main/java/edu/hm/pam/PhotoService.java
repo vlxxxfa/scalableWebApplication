@@ -14,5 +14,5 @@ public interface PhotoService {
 
     List<Photo> findAllPhotosByUserNameAndPhotoAlbumTitle(String userName, String albumTitle) throws IOException;
 
-    boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo);
+    boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, String id);
 }

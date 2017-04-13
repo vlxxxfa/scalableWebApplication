@@ -56,32 +56,31 @@ public class PhotoController {
         return result;
     }
 
-
-    // With Spring 4.1 and above, you can return pretty much anything (such as pictures, pdfs, documents, jars, zips, etc)
-    // quite simply without any extra dependencies.
-    // For example, the following could be a method to return a user's profile picture from MongoDB GridFS:
     @RequestMapping(path = "findAllPhotosByUserNameAndPhotoAlbumTitle", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<String>> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
-                                                                                         @PathVariable(value = "albumTitle") String albumTitle) throws IOException {
+    public ResponseEntity<List<Photo>> findAllPhotosByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
+                                                                                 @PathVariable(value = "albumTitle") String albumTitle) throws IOException {
         final List<Photo> allPhotosByUserNameAndPhotoAlbumTitle = photoService.findAllPhotosByUserNameAndPhotoAlbumTitle(userName, albumTitle);
 
-        List<String> toReturn = new ArrayList<>(allPhotosByUserNameAndPhotoAlbumTitle.size());
+        List<Photo> toReturnPhotoList = new ArrayList<>(allPhotosByUserNameAndPhotoAlbumTitle.size());
 
         for (Photo photo : allPhotosByUserNameAndPhotoAlbumTitle) {
-            toReturn.add(Base64.getEncoder().withoutPadding().encodeToString(photo.getMultipartFile().getBytes()));
+            Photo addPhotoToPhotoList = new Photo();
+            addPhotoToPhotoList.setId(photo.getId());
+            addPhotoToPhotoList.setTitle(photo.getMultipartFile().getOriginalFilename());
+            addPhotoToPhotoList.setBase64(Base64.getEncoder().withoutPadding().encodeToString(photo.getMultipartFile().getBytes()));
+            toReturnPhotoList.add(addPhotoToPhotoList);
         }
-
-        ResponseEntity<List<String>> body = ResponseEntity.ok()
-                .body(toReturn);
+        ResponseEntity<List<Photo>> body = ResponseEntity.ok()
+                .body(toReturnPhotoList);
 
         return body;
     }
 
-    @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle", method = RequestMethod.POST)
+    @RequestMapping(value = "deletePhotoByUserNameAndPhotoAlbumTitle/{id}", method = RequestMethod.POST)
     public boolean deletePhotoByUserNameAndPhotoAlbumTitle(@PathVariable(value = "userName") String userName,
                                                            @PathVariable(value = "albumTitle") String albumTitle,
-                                                           @RequestBody Photo photo) {
-        return photoService.deletePhotoByUserNameAndPhotoAlbumTitle(userName, albumTitle, photo);
+                                                           @PathVariable(value = "id") String id) {
+        return photoService.deletePhotoByUserNameAndPhotoAlbumTitle(userName, albumTitle, id);
     }
 }

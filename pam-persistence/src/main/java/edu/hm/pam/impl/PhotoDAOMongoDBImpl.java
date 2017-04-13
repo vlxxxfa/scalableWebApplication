@@ -73,7 +73,6 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
                 if (foundUserWithPhotoAlbum != null) {
                     collection.updateOne(query, command);
                     status = true;
-                    System.out.println("Photo inserted");
                 } else {
                     System.out.println("Photoalbum didn't find");
                     status = false;
@@ -103,25 +102,23 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
             for (Document searchDocumentByAlbumTitle : embeddedPhotoAlbenOfUser) {
                 if (searchDocumentByAlbumTitle.containsValue(albumTitle)) {
                     documentForFoundedPhotoAlbum = searchDocumentByAlbumTitle;
-                    System.out.println("AlbumTitle found");
                     break;
                 }
             }
-            List<DBRef> referencesInFoundenPhotoAlbum = (List<DBRef>) documentForFoundedPhotoAlbum.get("photoList");
+            List<DBRef> referencesInFoundedPhotoAlbum = (List<DBRef>) documentForFoundedPhotoAlbum.get("photoList");
 
-            if (referencesInFoundenPhotoAlbum == null || referencesInFoundenPhotoAlbum.isEmpty()) {
+            if (referencesInFoundedPhotoAlbum == null || referencesInFoundedPhotoAlbum.isEmpty()) {
                 return photoList;
             } else {
 
-                for (DBRef dbRef : referencesInFoundenPhotoAlbum) {
+                for (DBRef dbRef : referencesInFoundedPhotoAlbum) {
                     GridFSDBFile imageForOutput = gridFS.findOne((ObjectId) dbRef.getId());
                     photo = new Photo();
                     if (imageForOutput != null) {
-                        // System.out.println("Founded GridFSDBFile with fileName: " + imageForOutput.getFilename());
                         MultipartFile multiPartFile = createMultiPartFile(imageForOutput);
+                        photo.setId(imageForOutput.getId().toString());
                         photo.setMultipartFile(multiPartFile);
                         photoList.add(photo);
-                        // System.out.println("Photo with _id'" + dbRef.getId() + "' is added to photolist for present");
                     } else {
                         return photoList;
                     }
@@ -133,6 +130,75 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
         return photoList;
     }
 
+    @Override
+    public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, String id) {
+
+        boolean status = false;
+
+        if (this.findAndDeletePhotoByPhotoTitleAndReferenceOfPhoto(userName, albumTitle, id)) {
+            gridFS.remove(gridFS.findOne(new ObjectId(id)));
+            status = true;
+        }
+        return status;
+    }
+
+    private boolean findAndDeletePhotoByPhotoTitleAndReferenceOfPhoto(String userName, String albumTitle, String id) {
+        boolean status = false;
+
+        Document documentForFoundedPhotoAlbum = null;
+        List<DBRef> dbRefList;
+
+        try {
+            Document foundUser = collection.find(new Document("_id", userName)).first();
+            List<Document> embeddedPhotoAlbenOfUser = (List<Document>) foundUser.get("photoAlbumList");
+
+            for (Document searchDocumentByAlbumTitle : embeddedPhotoAlbenOfUser) {
+                if (searchDocumentByAlbumTitle.containsValue(albumTitle)) {
+                    documentForFoundedPhotoAlbum = searchDocumentByAlbumTitle;
+                    break;
+                }
+            }
+            List<DBRef> referencesInFoundedPhotoAlbum = (List<DBRef>) documentForFoundedPhotoAlbum.get("photoList");
+            dbRefList = new ArrayList<>(referencesInFoundedPhotoAlbum);
+
+            if (referencesInFoundedPhotoAlbum == null || referencesInFoundedPhotoAlbum.isEmpty()) {
+                status = false;
+            } else {
+                for (DBRef dbRef : referencesInFoundedPhotoAlbum) {
+                    if (dbRef.getId().toString().contains(id)) {
+                        dbRefList.remove(dbRef);
+                    }
+                }
+                Document query = new Document();
+                query.put("_id", userName);
+                query.put("photoAlbumList.albumTitle", albumTitle);
+
+                // pullAll delete all elements
+                Document data = new Document();
+                data.put("photoAlbumList.$.photoList", referencesInFoundedPhotoAlbum);
+
+                Document command = new Document();
+                command.put("$pullAll", data);
+
+                collection.updateOne(query, command);
+
+                // pushAll added new elements
+                Document newData = new Document();
+                newData.put("photoAlbumList.$.photoList", dbRefList);
+
+                Document newCommand = new Document();
+                newCommand.put("$pushAll", newData);
+
+                collection.updateOne(query, newCommand);
+
+                status = true;
+            }
+        } catch (NullPointerException npe) {
+            logger.error(npe.getMessage(), npe);
+        }
+        return status;
+    }
+
     private MultipartFile createMultiPartFile(GridFSDBFile gridFSDBFile) throws IOException {
 
         String fileName = gridFSDBFile.getFilename();
@@ -141,57 +207,5 @@ public class PhotoDAOMongoDBImpl implements PhotoDAO {
 
         MultipartFile multipartFile = new MockMultipartFile(fileName, originalFileName, contentType, gridFSDBFile.getInputStream());
         return multipartFile;
-    }
-
-    @Override
-    public boolean deletePhotoByUserNameAndPhotoAlbumTitle(String userName, String albumTitle, Photo photo) {
-
-        boolean status = false;
-
-        while (gridFS.findOne(photo.getMultipartFile().getName()) != null) {
-            gridFS.remove(gridFS.findOne(photo.getMultipartFile().getName()));
-            status = true;
-        }
-        return status;
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        PhotoDAOMongoDBImpl photoDAOMongoDB = new PhotoDAOMongoDBImpl();
-
-        File file = new File("/Users/vlfa/Dropbox/velo.jpeg");
-
-        // String name = "velo";
-        // String originalFileName = "velo.jpeg";
-        // String contentType = "image/jpeg";
-        // byte[] content = null;
-        //
-        // BufferedImage bufferedImage = ImageIO.read(file);
-        //
-        // // get DataBufferBytes from Raster
-        // WritableRaster raster = bufferedImage .getRaster();
-        // DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
-        //
-        // content = data.getData();
-        //
-        // MultipartFile multipartFile = new MockMultipartFile(name,
-        //         originalFileName, contentType, content);
-
-        Photo photo = new Photo();
-        // photo.setFile(file);
-        // photo.setMultipartFile(multipartFile);
-
-        // photo.setPhotoAlben(photoAlbumList);
-        // boolean status = photoDAOMongoDB.savePhoto(photo);
-        // boolean status = photoDAOMongoDB.deletePhoto(photo);
-        // Photo status = photoDAOMongoDB.findPhoto(photo);
-        // Photo status = photoDAOMongoDB.updatePhoto(photo);
-        // System.out.print(photoDAOMongoDB.findAllPhotos());
-        // System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("vfaerman", "album"));
-        // System.out.println(photoDAOMongoDB.savePhotoByAlbumTitleOfUser("vfaerman", "album", photo));
-        // System.out.println(photoDAOMongoDB.deletePhotoByUserNameAndPhotoAlbumTitle("Test", "admin", photo));
-        System.out.println(photoDAOMongoDB.findAllPhotosByUserNameAndPhotoAlbumTitle("asd", "album"));
-        // photoDAOMongoDB.getPhotoAlbum("Faerman", "album");
-        // System.out.println(status);
     }
 }
