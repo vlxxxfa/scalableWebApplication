@@ -3,6 +3,7 @@ package edu.hm.pam.impl;
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -32,7 +33,11 @@ public class PhotoAlbumDAOMongoDBImpl implements PhotoAlbumDAO {
     static final Logger logger = LoggerFactory.getLogger(PhotoAlbumDAOMongoDBImpl.class);
 
     // // TODO: 22.03.17 to insert a MongoConnection in an exclude class
-    private MongoClient mongo = new MongoClient("localhost", 27017);
+    // private MongoClientURI mongoClientURI = new MongoClientURI("mongodb://vfaerman:6ndAl0s0cCICnkwZ@testing-shard-00-00-oqnqu.mongodb.net:27017,testing-shard-00-01-oqnqu.mongodb.net:27017,testing-shard-00-02-oqnqu.mongodb.net:27017/admin?ssl=true&replicaSet=testing-shard-0&authSource=admin");
+    // private MongoClient mongo = new MongoClient(mongoClientURI);
+
+    private MongoClientURI mongoClientURI = new MongoClientURI("mongodb://35.157.116.250:27017");
+    private MongoClient mongo = new MongoClient(mongoClientURI);
     private MongoDatabase db = mongo.getDatabase("qwertz");
     private MongoCollection<Document> collection = db.getCollection("users");
 
